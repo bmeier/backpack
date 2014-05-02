@@ -1,0 +1,55 @@
+ _                 _                       _     
+| |               | |                     | |    
+| | _   ____  ____| |  _ ____   ____  ____| |  _ 
+| || \ / _  |/ ___) | / )  _ \ / _  |/ ___) | / )
+| |_) | ( | ( (___| |< (| | | ( ( | ( (___| |< ( 
+|____/ \_||_|\____)_| \_) ||_/ \_||_|\____)_| \_)
+                        |_|                      
+
+Backpack is an inventory manager for The Elderscrolls Online.
+
+---------------------
+Disclaimer:
+This is an early preview version. I'm not responsible for any damage that is done to your digital alter ego (aka missing items, missing gold or anything else). By installing this addon you agree to this disclaimer.
+---------------------
+
+Backpack displays groups of items from the player's inventory that are dynamically created based on custom filters. You can choose to show or hide individual groups from the addon's SETTINGS menu. Backpack can also optionally be shown when interacting with various game objects like banks, stores, other players etc. Check the addon's SETTINGS menu to change this behaviour.
+
+This preview version is still lacking of an UI to add/combine filters to create new groups. For now Backpack comes with builtin "custom" filters. Most of them reassembling the filters known from the default TESO inventory. 
+
+There are very likely a lot of bugs and glitches in the code of this addon. If you encounter an error, please take a minute to report it (it will be even greater if you can provide a stacktrace of the error :*). Also, check those very incomplete lists below. 
+
+In general I'd love to get your feedback/advice/ideas. 
+
+Usage
+- Use the game's CONTROL menu to bind Backpack to a key, or
+- Use the /backpack or /bp slash command to toggle Backpack
+
+
+Stuff that is not implemented
+- UI to create new filters/groups
+- DnD
+- Search
+- item context menu
+	- Report Item
+	- Mark Item as Junk
+- localization, (foreign) English only - sry
+- tbc
+
+Stuff that is not tested 
+- Veteran Levels: I can't test how Backpack works for veteran level players and items. As far as I can judge from the code, chances are huge that Backpack will break - at least the item context menu. 
+- Trade: Haven't done much testing on this as well
+- tbc
+
+Stuff that is known to be broken
+- Item Context Menus for veteran level players or items
+- Interaction with Guild Store
+- very likely many more
+
+
+
+
+
+
+
+  

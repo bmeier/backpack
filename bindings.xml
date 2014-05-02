@@ -1,0 +1,9 @@
+<Bindings>
+  <Layer name="General">
+    <Category name="Backpack">
+      <Action name="TOGGLE_BACKPACK">
+        <Down>SCENE_MANAGER:Toggle("backpack");</Down>
+      </Action>
+    </Category>
+  </Layer>
+</Bindings>

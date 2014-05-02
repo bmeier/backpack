@@ -1,0 +1,21 @@
+## Title: Backpack
+## APIVersion: 100003
+## SavedVariables: Backpack_Settings
+
+
+libs\LibStub.lua
+libs\LibAddonMenu-1.0.lua
+
+Log.lua
+
+Searchbox.lua
+Scene.lua
+
+Filter.lua
+Bag.lua
+Slot.lua
+Group.lua
+Backpack.lua
+Handler.lua
+
+bindings.xml
