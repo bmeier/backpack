@@ -183,7 +183,7 @@ function Backpack:LoadSettings()
 			BACKPACK:UpdateGroups()
 		end
 	)
-	LAM:AddSlider(menu, "BP_UI_SCALE", "Scale", "", 1, 250, 100,
+	LAM:AddSlider(menu, "BP_UI_SCALE", "Scale", "", 25, 250, 1,
 		function() return self.settings.ui.scale*100 end,
 		function(value)
 			self.settings.ui.scale = value/100
