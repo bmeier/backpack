@@ -3,6 +3,17 @@ local BackpackScene = ZO_Scene:Subclass();
 
 BackpackScene.backpack = nil;
 BackpackScene.searchBox = nil;
+BackpackScene.keybindStrip = {
+   {
+      alignment = KEYBIND_STRIP_ALIGN_CENTER,
+      name = GetString(SI_QUEST_JOURNAL_CYCLE_FOCUSED_QUEST),
+      keybind = "UI_SHORTCUT_CYCLE_FOCUSED_QUEST",
+      callback = function()
+         local IGNORE_SCENE_RESTRICTION = true
+         QUEST_TRACKER:AssistNext(IGNORE_SCENE_RESTRICTION)
+      end
+   },
+}
 
 function BackpackScene:New( )
 	local scene = ZO_Scene.New(self, "backpack", SCENE_MANAGER);
@@ -18,6 +29,7 @@ function BackpackScene:New( )
    scene:AddFragmentGroup(FRAGMENT_GROUP.UI_WINDOW)
    scene:AddFragment(TOP_BAR_FRAGMENT)
    scene.searchBox = BackpackSearchbox:New();
+  -- scene:AddFragment(searchBox);
 	return scene;
 end
 

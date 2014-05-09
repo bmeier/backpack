@@ -11,10 +11,13 @@ Log.lua
 Searchbox.lua
 Scene.lua
 
+Window.lua
 Filter.lua
 Bag.lua
 Slot.lua
+GroupControl.lua
 Group.lua
+
 Backpack.lua
 Handler.lua
 

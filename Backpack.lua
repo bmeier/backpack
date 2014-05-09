@@ -1,10 +1,5 @@
 local Log = LOG_FACTORY:GetLog("Backpack");
 
-local function Backpack_RemoveGroups()
-	for _, group in pairs(BACKPACK.groups) do
-	end
-end
-
 local Backpack = ZO_Object:Subclass();
 Backpack.ADDON_NAME = "Backpack";
 Backpack.ADDON_VERSION = 1;
@@ -16,20 +11,32 @@ Backpack.DEFAULT_SETTINGS = {
 		hideEmptyGroups = true,
 		emptyBorderColor = { 0.33, 0.33, 0.33, 1.0 },
 		iconSize = 64,
-		scale = 1.0,
+		scale = 0.9,
 		group = {
 			font = "ZoFontWinH1",
+			minColumnCount = 3,
 			maxColumnCount = 10,
 			clampToScreen = true,
 			padding = 4,
 			insets = 40,
-			controls = {
-				["*"] = {
-					top = 0,
-					left = 0,
-				}
-			}
 		},
+		windows = {
+			['*'] = {
+				top 	= 0,
+				left  	= 0, 
+				width 	= 100,
+				height 	= 100,
+				insets 	= { top = 10,  left=10, bottom=10, right=10},
+				backdrop = {
+					centerTexture = nil,
+					centerColor = { 0, 0, 0, 0.3},
+					edgeTexture = nil,
+					edgeColor = { 0.1, 0.1, 0.1, 0.8},
+					edgeWidth = 1,
+					edgeHeight = 1,
+				},
+			}
+		}
 	},
 
 	scenes = {
@@ -65,13 +72,12 @@ end
 
 function Backpack:OnLoad() 
 	ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_BACKPACK", "Toggle Backpack")
-	--ZO_CreateStringId("SI_BINDING_NAME_TOGGLE_BACKPACK", "Search Backpack")
+	--ZO_CreateStringId("SI_BINDING_NAME_SEARCH_BACKPACK", "Search Backpack")
 	
 	self:LoadSettings();
 	self:CreateBags();
 	self:CreateDefaultGroups();
 
-	Backpack_RemoveGroups();
 	self:UpdateGroups();
 
 	for i, group in pairs(self.groups) do	
@@ -171,7 +177,7 @@ end
 
 function Backpack:LoadSettings()
 	self.settings = ZO_SavedVars:NewAccountWide("Backpack_Settings", 1, nil, self.DEFAULT_SETTINGS);
-
+	LOG_FACTORY:SetStrLevel(self.settings.logLevel)
 	local LAM = LibStub("LibAddonMenu-1.0");
 	local menu = LAM:CreateControlPanel("BACKPACK_SETTINGS_PANEL", "Backpack") --|cE73E01
 
@@ -190,6 +196,8 @@ function Backpack:LoadSettings()
 			BACKPACK:UpdateGroups()
 		end
 	)
+
+
 	LAM:AddHeader(menu, "BP_MENU_HEADER_GROUPS", "Groups")
 
 	local groupInfos = {

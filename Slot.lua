@@ -30,6 +30,34 @@ function BackpackSlotControl:OnClicked(control, button)
 	end
 end
 
+function BackpackSlotControl:OnMouseDoubleClick(button)
+	if(button == 1) then
+		local bagId = self.slot.bag.id;
+		local idx = self.slot.idx;
+
+		if ZO_Store_IsShopping() then
+			CallSecureProtected("PickupInventoryItem", bagId, idx)
+			SetCursorItemSoundsEnabled(true)
+			CallSecureProtected("PlaceInStoreWindow");
+		elseif PLAYER_INVENTORY:IsBanking() then
+        	CallSecureProtected("PickupInventoryItem", bagId, idx)
+			SetCursorItemSoundsEnabled(true)
+			local emptySlotIndex = FindFirstEmptySlotInBag(BAG_BANK)
+    		if(emptySlotIndex ~= nil) then
+        		CallSecureProtected("PlaceInInventory", BAG_BANK, emptySlotIndex)
+    		end
+    	elseif TRADE_WINDOW:IsTrading() then
+			CallSecureProtected("PickupInventoryItem", bagId, idx)
+			SetCursorItemSoundsEnabled(true)
+			CallSecureProtected("PlaceInTradeWindow");
+        elseif not MAIL_SEND:IsHidden() then
+			CallSecureProtected("PickupInventoryItem", bagId, idx)
+			SetCursorItemSoundsEnabled(true)
+			CallSecureProtected("PlaceInAttachmentSlot");
+		end
+	end
+end
+
 function BackpackSlotControl:Initialize()
 	local name = "BackpackSlotControl_"..self.slot.bag.id.."_"..self.slot.idx;
 	local control = CreateControl(name, GuiRoot, CT_BUTTON);
@@ -38,6 +66,7 @@ function BackpackSlotControl:Initialize()
 	control:SetHandler("OnClicked", function(control, button) self:OnClicked(control, button) end)
 	control:SetHandler("OnMouseEnter", function(...)  self:OnMouseEnter(); end)
 	control:SetHandler("OnMouseExit", function(...)  self:OnMouseExit(); end)
+	control:SetHandler("OnMouseDoubleClick", function(control, button) self:OnMouseDoubleClick(button) end)
 
 	control.background = CreateControl(name.."Background", control, CT_TEXTURE);
 	control.background:SetAnchorFill(control);
@@ -117,9 +146,7 @@ function BackpackSlotControl:ShowPopupMenu()
 		local count = self.slot.itemInfo.count
 		local bagId = self.slot.bag.id
 		local idx = self.slot.idx
-	--	ZO_Dialogs_ShowDialog("ENCHANTING", {bag = self.slot.bag.id, index = self.slot.idx })
-	--	ZO_Dialogs_ShowDialog("DESTROY_ITEM_PROMPT", nil, {mainTextParams = {itemLink, itemCount, GetString(SI_DESTROY_ITEM_CONFIRMATION)}})
-		local empty = function() Log:I("Not implemented") end;
+		local empty = function() Log:E("Not implemented") end;
 		-- 
 		if (TRADING_HOUSE:IsAtTradingHouse())  then
 			CallSecureProtected("PickupInventoryItem", bagId, idx)
@@ -155,7 +182,7 @@ function BackpackSlotControl:ShowPopupMenu()
     				ClearMenu();
 				end
 			)
-		elseif PLAYER_INVENTORY:IsBanking() then
+		elseif not MAIL_SEND:IsHidden() then
         	AddMenuItem("Send", 
         		function()
 					CallSecureProtected("PickupInventoryItem", bagId, idx)
