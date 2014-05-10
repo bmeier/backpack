@@ -4,48 +4,181 @@
 ----------------------------------------
 local Log = LOG_FACTORY:GetLog("BackpackGroupControl")
 
+
+local ResizeController = ZO_Object:Subclass()
+ResizeController.changeColumns = true
+ResizeController.direction = 0
+local NORTH , EAST , SOUTH , WEST = 0, 1, 2, 3
+
+function ResizeController:New( window )
+	local controller = ZO_Object.New(self)
+	controller.window = window
+
+	return controller
+end
+
+function ResizeController:OnResizeStart( ... )
+	local control = self.window.control
+	EVENT_MANAGER:RegisterForUpdate(self.window.name, 250, function() self:OnUpdate() end)
+
+	local x, y = GetUIMousePosition()
+	local top, left, bottom, right = control:GetTop(), control:GetLeft(), control:GetBottom(), control:GetRight()
+
+	self.prevWidth, self.prevHeight = control:GetDimensions()
+	self.initialWidth = self.prevWidth
+	self.initialHeight = self.initialHeight
+
+	local dir
+	local dxLeft  = math.abs(x-left)
+	local dxRight = math.abs(x-right)
+
+
+
+	local dx = math.min(math.abs(x-left), math.abs(x-right))
+	local dy = math.min(math.abs(y-top), math.abs(y-bottom))
+	self.changeColumns = dx < dy
+
+	if dx < dy then
+		if math.abs(x-left) < math.abs(x-right) then
+			dir = WEST
+		else
+			dir = EAST
+		end
+	else
+		if math.abs(y-top) < math.abs(y-bottom) then
+			dir = NORTH
+		else
+			dir = SOUTH
+		end
+	end
+	self.direction = dir
+end
+
+function ResizeController:OnUpdate( ... )
+	--Log:T("ResizeController:OnUpdate, changing column count: ", self.changeColumnCount)
+
+	local window = self.window
+	local control = self.window.control
+	local scale = BACKPACK.settings.ui.scale
+
+	-- scaled
+	local w, h = control:GetWidth(), control:GetHeight()
+
+	--unscaled :(
+	local prefW, prefH = self.window:GetPrefDimensions()
+	local delta = (BACKPACK.settings.ui.iconSize + BACKPACK.settings.ui.group.padding) * BACKPACK.settings.ui.scale
+
+	--Log:T("w: ", w,", prefW: ", prefW, ", dw: ", dw)
+	--Log:T("h: ", h, ", dh: ", dh)
+	--Log:T("cols: ", window.settings.columns )
+	local top, left = control:GetTop(), control:GetLeft()
+	if(self.changeColumns) then
+		local dw = w-(prefW*scale)
+		if dw >= delta then
+			local columns = window.group.settings.columns
+			while dw >=delta and columns < #window.group.slots do
+				dw = dw - delta
+				columns = columns + 1
+			end
+			window:SetColumns(columns)
+			local newWidth, newHeight = window:DoLayout()
+			window.control:SetHeight(newHeight)
+			if self.direction == EAST then
+				control:ClearAnchors()
+				control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, left, top)
+			end
+		elseif dw < 0 and window.group.settings.columns > 1 then
+			local columns = window.group.settings.columns
+			while dw < 0 and columns > 1 do
+				dw = dw + delta
+				columns = columns - 1
+			end
+			window:SetColumns(columns)
+			local newWidth, newHeight = window:DoLayout()
+			window.control:SetHeight(newHeight)
+			if self.direction == EAST then
+				control:ClearAnchors()
+				control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, left, top)
+			end
+		end
+	else
+		local dh = h-(prefH*scale)
+		if dh >= delta then
+			local rows = window.group.settings.rows
+			while dh >=delta and rows < #window.group.slots do
+				dh = dh - delta
+				rows = rows + 1
+			end
+			window:SetRows(rows)
+			local newWidth, newHeight = window:DoLayout()
+			
+
+			window.control:SetWidth(newWidth)
+			if self.direction == SOUTH then
+				control:ClearAnchors()
+				control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, left, top)
+			end
+		elseif dh < 0 and window.group.settings.rows > 1 then
+			local rows =window.group.settings.rows
+			while dh < 0 and rows > 1 do
+				dh = dh + delta
+				rows = rows - 1
+			end
+			window:SetRows(rows)
+			local newWidth, newHeight = window:DoLayout()
+			window.control:SetWidth(newWidth)
+			if self.direction == SOUTH then
+				control:ClearAnchors()
+				control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, left, top)
+			end
+		end
+	end
+end
+
+function ResizeController:OnResizeStop( ... )
+	EVENT_MANAGER:UnregisterForUpdate(self.window.name)
+	local w, h = self.window:DoLayout()
+	Log:T("pref dimensions: ", w, ", ", h)
+	self.window.control:SetDimensions(w, h)
+end
+
+
+
+
 BackpackGroupControl = BackpackWindow:Subclass()
 BackpackGroupControl.group = nil;
 BackpackGroupControl.control = nil;
+BackpackGroupControl.prefWidth = 0
+BackpackGroupControl.prefHeight = 0
+BackpackGroupControl.layoutDirty = false
+BackpackGroupControl.layoutColumns = true
 
-function BackpackGroupControl:New( group,  settings )
+
+function BackpackGroupControl:New( group )
 	assert(group)
-	local obj = BackpackWindow.New(self, "BackpackGroupControl".. (group.name or "nil"));
+	local obj = BackpackWindow.New(self, "BackpackGroupControl".. group.name)
 	assert(obj.control)
-	obj:Initialize(group,  settings);
+	obj:Initialize(group );
+	obj.resizeController = ResizeController:New(obj)
 	return obj;	
 end
 
 
+function BackpackGroupControl:ApplySettings()
+	BackpackWindow.ApplySettings(self)
+end
+
 function BackpackGroupControl:OnResizeStart(width, height)
 	Log:T("BackpackGroupControl:OnResizeStart(width, height)")
+	self.resizeController:OnResizeStart()
 end
 
 function BackpackGroupControl:OnResizeStop()
 	Log:T("OnResizeStop(width, height)")
-	self:SetColumnsFromWidth()
-	self:DoLayout()
+	self.resizeController:OnResizeStop()
 end
 
-function BackpackGroupControl:SetColumnsFromWidth( )
-	local width = self.control:GetWidth()
-	local columns = math.floor( width / BACKPACK.settings.ui.iconSize )
-
-
-	self.settings.columns = self:Limit(columns)
-	Log:T("new column count: ", columns)
-end
-
-function BackpackGroupControl:Limit(columns)
-	if columns > BACKPACK.settings.ui.group.maxColumnCount then
-		columns = BACKPACK.settings.ui.group.maxColumnCount
-	elseif columns < BACKPACK.settings.ui.group.minColumnCount then
-		columns = BACKPACK.settings.ui.group.minColumnCount
-	end
-	return columns
-end
-
-function BackpackGroupControl:Initialize( group,  settings )
+function BackpackGroupControl:Initialize( group )
 	assert(group)
 	assert(self.control)
 	
@@ -76,50 +209,86 @@ function BackpackGroupControl:Initialize( group,  settings )
 			end 
 		end )
 
+	
 	self:Update()
-	self:DoLayout()
 end
 
 
-function BackpackGroupControl:DoLayout(width, height)
-	Log:T("BackpackGroupControl:DoLayout(width, height): ", width, ", ", height)
+function BackpackGroupControl:SetColumns( columns )
+	--Log:T("SetColumns old columns: " .. self.group.settings.columns)
+	--Log:T("SetColumns old rows: " .. self.group.settings.rows)
+	if columns > #self.group.slots then
+		columns = #self.group.slots
+	end
 
+ 	if columns < 1 then 
+
+ 		columns = 1 
+ 	end
+
+    self.group.settings.columns = columns
+   -- Log:T("SetColumns new columns: " .. self.group.settings.columns)
+    local rows = math.ceil(#self.group.slots/columns)
+    
+ 	self.group.settings.rows = rows
+ 	self.layoutColumns = true
+ 	--Log:T("SetColumns new rows: " .. self.group.settings.rows)
+end
+
+function BackpackGroupControl:SetRows( rows )
+    local columns = math.ceil(#self.group.slots/rows)
+    self:SetColumns(columns)
+ 	self.layoutColumns = false
+end
+
+function BackpackGroupControl:DoLayout()
+	--Log:T("BackpackGroupControl:DoLayout()")
 
 	local control = self.control
 	local group = self.group
-	local columns = self.settings.columns
+	local columns = self.group.settings.columns
+	assert(columns)
+	local rows = math.ceil(#group.slots / columns) 
+assert(rows)
+	self.group.settings.rows = rows
+
 	local iconSize = BACKPACK.settings.ui.iconSize
 	local padding  = BACKPACK.settings.ui.group.padding
 	local insets   = BACKPACK.settings.ui.group.insets
+	
 
-	local rows = math.ceil(#group.slots / columns);
-	width  = (columns*iconSize) + ((columns-1)*padding);
-
+	local width  = (columns*iconSize) + ((columns-1)*padding);
 	local contentHeight = (rows * iconSize) + ((rows-1)*padding);
 	local windowHeight = contentHeight + self.control.label:GetFontHeight();
 
-	self.control.content:SetDimensions(width, height)
-	self.control:SetDimensions(width, windowHeight)
+	self.control.content:SetDimensions(width, contentHeight)
+--	self.control:SetDimensions(width, windowHeight)
+	local row = 1;
+	local col = 1;
+	for i=1, #self.group.slots do
+		local slot = self.group.slots[i].control.control;
+		local top =  (row-1)*(iconSize+padding);
+		local left = (col-1)*(iconSize+padding);
 
-	--if(columns ~= self.columns) then
-		local r = 1;
-		local c = 1;
+		slot:ClearAnchors()
+		slot:SetAnchor(TOPLEFT, control.content, TOPLEFT, left, top);
 
-		for i=1, #self.group.slots do
-			local slot = self.group.slots[i].control.control;
-			local top =  (r-1)*(iconSize+padding);
-			local left = (c-1)*(iconSize+padding);
-			slot:ClearAnchors()
-			slot:SetAnchor(TOPLEFT, control.content, TOPLEFT, left, top);
-			if(c == columns) then 
-				r = r + 1; 
-				c = 1;
+			if(col == columns) then 
+				row = row + 1; 
+				col= 1;
 			else
-				c = c + 1;
+				col = col + 1;
 			end
-		end
-	--end
+	end
 	
+	self.prefWidth = width
+	self.prefHeight = windowHeight
+
+	return width, windowHeight
+end
+
+function BackpackGroupControl:GetPrefDimensions()
+	return self.prefWidth, self.prefHeight
 end
 
 function BackpackGroupControl:Update(  )
@@ -142,13 +311,7 @@ function BackpackGroupControl:Update(  )
 		slot.control.control:SetHidden(false)
 	end
 	
-	if not self.settings.columns or (self.settings.columns == 0) then
-		local columns = #group.slots
-		self:Limit(columns)
-		if(columns > 6) then
-			columns = 6
-		end
-		self.settings.columns = columns
-	end
-	self:DoLayout()	
+	self.layoutDirty = true
+	local width, height = self:DoLayout()	
+	self.control:SetDimensions(width, height)
 end

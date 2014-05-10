@@ -24,6 +24,7 @@ BackpackGroup.name = "";
 BackpackGroup.slots = {};
 BackpackGroup.filter = nil;
 BackpackGroup.hidden = false;
+BackpackGroup.settings = {};
 
 function BackpackGroup:New( name, filter )
 	local group = ZO_Object.New(self);
@@ -35,13 +36,12 @@ end
 
 function BackpackGroup:Initialize() 
 	local name = self.name.."Control"
+	self.settings = BACKPACK.settings.ui.groups[name]
 	self.control = BackpackGroupControl:New(self);
 	self.fragment = BackpackGroupFragment:New(self);
 end
 
 function BackpackGroup:Update() 
-
-
 	self.control:Update()
 end
 

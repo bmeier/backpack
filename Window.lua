@@ -19,6 +19,7 @@ function BackpackWindow:InitializeWindow( name )
 	self.control:SetMouseEnabled(true)
 	self.control:SetResizeHandleSize(MOUSE_CURSOR_RESIZE_NS)
 
+	self.control:SetHandler('OnMouseDown', function() Log:T("OnMouseDown"); self:OnMouseDown() end)
 	self.control:SetHandler('OnMouseUp', function() Log:T("OnMouseUp"); self:SaveSettings(); end);
 	self.control:SetHandler('OnMoveStop', function() Log:T("OnMoveStop"); self:SaveSettings(); end)
 	self.control:SetHandler('OnResizeStart', function() Log:T("OnResizeStart"); 
@@ -35,15 +36,17 @@ function BackpackWindow:InitializeWindow( name )
 	self:ApplySettings()
 end
 
+function BackpackWindow:OnMouseDown()
+
+end
+
 function BackpackWindow:OnResizeStart(width, height)
-	--self.control:SetHandler("OnUpdate", function() Log:T("OnUpdate") end)
+
 end
 
 function BackpackWindow:OnResizeStop(width, height)
 	Log:T("BackpackWindow:OnResize(width, height)")
-	--self:DoLayout(width, height)
-	--this may be a stupid idea
-	--self:FireCallback("OnResize", width, height)
+	self:SaveSettings()
 end
 
 function BackpackWindow:DoLayout()
@@ -76,6 +79,7 @@ function BackpackWindow:ApplySettings()
 	control.backdrop:ClearAnchors()
 	control.backdrop:SetAnchor(TOPLEFT, control, TOPLEFT, -settings.insets.left, -settings.insets.top)
 	control.backdrop:SetAnchor(BOTTOMRIGHT, control, BOTTOMRIGHT, settings.insets.right, settings.insets.bottom)
+	control:SetHitInsets(-settings.insets.left, -settings.insets.top, settings.insets.right, settings.insets.bottom )
 end
 
 function BackpackWindow:SaveSettings()
