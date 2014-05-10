@@ -76,6 +76,8 @@ function Log.SafeToString( obj )
 		return "function";
 	elseif(type(obj) == "table") then
 		return "table"
+	elseif(type(obj) == "boolean") then
+		if (obj == true) then return "true" else return "false" end
 	end
 	return "<unkown>"
 
