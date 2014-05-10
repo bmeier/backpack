@@ -7,6 +7,7 @@ Backpack.DEFAULT_SETTINGS = {
 	version = 2,
 	name = "BackpackSettings",
 	logLevel = "Warn",
+	firstRun = true,
 	ui = { 
 		hideEmptyGroups = true,
 		emptyBorderColor = { 0.33, 0.33, 0.33, 1.0 },
@@ -99,6 +100,7 @@ function Backpack:OnLoad()
 
 	self:UpdateGroups();
 
+	
 	for i, group in pairs(self.groups) do	
 		BACKPACK_SCENE:AddFragment(group.fragment)
 		for name, scene in pairs(self.settings.scenes) do
@@ -107,6 +109,17 @@ function Backpack:OnLoad()
 			end
 		end
 	end
+
+	if (self.settings.firstRun) then
+		local initialPosition = 0
+		for i, group in pairs(self.groups) do	
+			group.control.control:ClearAnchors();
+			group.control.control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, initialPosition, initialPosition)
+			initialPosition = initialPosition + 30
+			self.settings.firstRun = false
+		end
+	end
+	
 
 	EVENT_MANAGER:RegisterForEvent(Backpack.ADDON_NAME, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, function(...) self:OnSlotUpdate( ... ); end);
 	Log:D("Backpack loaded.");

@@ -31,14 +31,18 @@ function BackpackSlotControl:OnClicked(control, button)
 end
 
 function BackpackSlotControl:OnMouseDoubleClick(button)
+	
 	if(button == 1) then
 		local bagId = self.slot.bag.id;
 		local idx = self.slot.idx;
-		if BACKPACK_SCENE:GetState() == "shown" then
-			local usable, onlyFromActionSlot = IsItemUsable(bagId, idx);
-			if usable and not onlyFromActionSlot then
+		if BACKPACK_SCENE.state == "shown" then
+			
+			if self.slot.itemInfo.usable then
 				CallSecureProtected("UseItem",bagId, idx)
+			elseif self.slot.itemInfo.equipable then
+				EquipItem(bagId, idx)
 			end
+
 		elseif ZO_Store_IsShopping() then
 			CallSecureProtected("PickupInventoryItem", bagId, idx)
 			SetCursorItemSoundsEnabled(true)
