@@ -4,7 +4,7 @@ local Backpack = ZO_Object:Subclass();
 Backpack.ADDON_NAME = "Backpack";
 Backpack.ADDON_VERSION = 1;
 Backpack.DEFAULT_SETTINGS = { 
-	version = 1,
+	version = 2,
 	name = "BackpackSettings",
 	logLevel = "Warn",
 	ui = { 
@@ -36,14 +36,33 @@ Backpack.DEFAULT_SETTINGS = {
 					edgeHeight = 1,
 				},
 			}
+		},
+
+		groups = {
+			['*'] = {
+				columns = 6,
+				rows = 0
+			}
 		}
 	},
 
 	scenes = {
-	--\o/
-		store = "store",
-		bank = "bank",
-		trade = "trade"
+		store = { 
+			name = "store",
+			visible = true
+		},
+		bank = { 
+			name = "bank",
+			visible = true
+		},
+		trade = { 
+			name = "trade",
+			visible = true
+		},
+		tradinghouse = { 
+			name = "tradinghouse",
+			visible = true
+		},
 	},
 
 	groups = {
@@ -82,8 +101,8 @@ function Backpack:OnLoad()
 
 	for i, group in pairs(self.groups) do	
 		BACKPACK_SCENE:AddFragment(group.fragment)
-		for scene,name in pairs(self.settings.scenes) do
-			if scene then
+		for name, scene in pairs(self.settings.scenes) do
+			if scene.visible then
 				SCENE_MANAGER:GetScene(name):AddFragment(group.fragment)
 			end
 		end
@@ -94,6 +113,27 @@ function Backpack:OnLoad()
 end
 
 function Backpack:UpdateScene( name )
+	local settings = self.settings.scenes[name]
+	local scene = SCENE_MANAGER:GetScene( settings.name )
+	
+	if( scene) then
+		if ( settings.visible  ) then
+			for i, group in pairs(self.groups) do
+				if(not scene.fragments[group.fragment]) then
+					scene:AddFragment(group.fragment)
+				end
+			end
+		else
+			for i, group in pairs(self.groups) do
+				if(scene.fragments[group.fragment]) then
+					scene.fragments[group.fragment] = nil --outch
+				end
+			end
+			
+		end
+	else
+		assert(false)
+	end
 
 end
 
@@ -176,7 +216,7 @@ end
 
 
 function Backpack:LoadSettings()
-	self.settings = ZO_SavedVars:NewAccountWide("Backpack_Settings", 1, nil, self.DEFAULT_SETTINGS);
+	self.settings = ZO_SavedVars:NewAccountWide("Backpack_Settings", self.DEFAULT_SETTINGS.version, nil, self.DEFAULT_SETTINGS);
 	LOG_FACTORY:SetStrLevel(self.settings.logLevel)
 	local LAM = LibStub("LibAddonMenu-1.0");
 	local menu = LAM:CreateControlPanel("BACKPACK_SETTINGS_PANEL", "Backpack") --|cE73E01
@@ -283,46 +323,34 @@ function Backpack:LoadSettings()
 
 	LAM:AddHeader(menu, "BP_MENU_HEADER_INTERACTION", "Interaction")
 	LAM:AddCheckbox(menu, "BP_SHOW_AT_STORE", "Show at Store", "",
-	 	function() return self.settings.scenes.store ~= nil end,
+	 	function() return self.settings.scenes.store.visible end,
 	 	function(val) 
-	 		if val then
-	 			self.settings.scenes.store = "store"
-	 		else
-	 			self.settings.scenes.store = nil
-	 		end
+	 		self.settings.scenes.store.visible = val
+	  		self:UpdateScene("store")
 	 	end
 	)
 
 	LAM:AddCheckbox(menu, "BP_SHOW_AT_BANK", "Show at Bank", "",
-	 	function() return self.settings.scenes.bank ~= nil end,
+	 	function() return self.settings.scenes.bank.visible end,
 	 	function(val) 
-	 		if val then
-	 			self.settings.scenes.bank = "bank"
-	 		else
-	 			self.settings.scenes.bank = nil
-	 		end
+	 		self.settings.scenes.bank.visible = val
+	 		self:UpdateScene("bank")
 	 	end
 	)
 
 	LAM:AddCheckbox(menu, "BP_SHOW_AT_TRADEHOUSE", "Show at Tradinghouse", "",
-	 	function() return self.settings.scenes.tradinghouse ~= nil end,
+	 	function() return self.settings.scenes.tradinghouse.visible end,
 	 	function(val) 
-	 		if val then
-	 			self.settings.scenes.tradinghouse = "tradinghouse"
-	 		else
-	 			self.settings.scenes.tradinghouse = nil
-	 		end
+	 		self.settings.scenes.tradinghouse.visible = visible
+	 		self:UpdateScene("tradinghouse")
 	 	end
 	)
 
 	LAM:AddCheckbox(menu, "BP_SHOW_IN_TRADES", "Show in Trades", "",
-	 	function() return self.settings.scenes.trade ~= nil end,
+	 	function() return self.settings.scenes.trade.visible end,
 	 	function(val) 
-	 		if val then
-	 			self.settings.scenes.trade = "trade"
-	 		else
-	 			self.settings.scenes.trade = nil
-	 		end
+	 		self.settings.scenes.trade.visible = val
+	 		self:UpdateScene("trade")
 	 	end
 	)
 
@@ -386,6 +414,7 @@ function Backpack:CreateBags()
 		Log:D("Bag " .. bag.id .." contains " .. #bag.slots ..  " slots.");
 	end
 end
+
 
 function Backpack:Search( exp ) 
 	local matches = 0;
