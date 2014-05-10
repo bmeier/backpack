@@ -34,8 +34,12 @@ function BackpackSlotControl:OnMouseDoubleClick(button)
 	if(button == 1) then
 		local bagId = self.slot.bag.id;
 		local idx = self.slot.idx;
-
-		if ZO_Store_IsShopping() then
+		if BACKPACK_SCENE:GetState() == "shown" then
+			local usable, onlyFromActionSlot = IsItemUsable(bagId, idx);
+			if usable and not onlyFromActionSlot then
+				CallSecureProtected("UseItem",bagId, idx)
+			end
+		elseif ZO_Store_IsShopping() then
 			CallSecureProtected("PickupInventoryItem", bagId, idx)
 			SetCursorItemSoundsEnabled(true)
 			CallSecureProtected("PlaceInStoreWindow");
@@ -50,7 +54,7 @@ function BackpackSlotControl:OnMouseDoubleClick(button)
 			CallSecureProtected("PickupInventoryItem", bagId, idx)
 			SetCursorItemSoundsEnabled(true)
 			CallSecureProtected("PlaceInTradeWindow");
-        elseif not MAIL_SEND:IsHidden() then
+        elseif MAIL_SEND:GetState() == "shown" then
 			CallSecureProtected("PickupInventoryItem", bagId, idx)
 			SetCursorItemSoundsEnabled(true)
 			CallSecureProtected("PlaceInAttachmentSlot");
