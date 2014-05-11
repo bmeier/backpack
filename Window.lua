@@ -10,26 +10,17 @@ end
 function BackpackWindow:InitializeWindow( name )
 	self.name = name
 	self.control = CreateTopLevelWindow( name )
-	self.settings =  BACKPACK.settings.ui.windows[name]
+	self.settings =  BACKPACK.settings.ui.windows[name] 
 	assert(self.control)
 	assert(self.settings)
 
 
 	self.control:SetMovable(true)
 	self.control:SetMouseEnabled(true)
-	self.control:SetResizeHandleSize(MOUSE_CURSOR_RESIZE_NS)
 
 	self.control:SetHandler('OnMouseDown', function() Log:T("OnMouseDown"); self:OnMouseDown() end)
 	self.control:SetHandler('OnMouseUp', function() Log:T("OnMouseUp"); self:SaveSettings(); end);
 	self.control:SetHandler('OnMoveStop', function() Log:T("OnMoveStop"); self:SaveSettings(); end)
-	self.control:SetHandler('OnResizeStart', function() Log:T("OnResizeStart"); 
-		self:OnResizeStart(self.control:GetWidth(), self.control:GetHeight()); 
-	end)
-
-	self.control:SetHandler('OnResizeStop', function() Log:T("OnResizeStop"); 
-		self:OnResizeStop(self.control:GetWidth(), self.control:GetHeight()); 
-	end)
-
 	self.control.backdrop = CreateControl(name.."Backdrop", self.control, CT_BACKDROP)
 	self.control.backdrop:SetAnchorFill(self.control)
 
@@ -67,7 +58,6 @@ function BackpackWindow:ApplySettings()
 	assert(control)
 	assert(settings)
 
-	control:SetDimensions(settings.width, settings.height)
 	control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, settings.left, settings.top)
 	
 	--control.backdrop:SetCenterTexture(settings.backdrop.centerTexture)

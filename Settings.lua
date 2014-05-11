@@ -81,7 +81,6 @@ local BACKPACK_DEFAULT_SETTINGS = {
 }
 
 BackpackSettings = ZO_Object:Subclass()
-BackpackSettings.data = {}
 
 function BackpackSettings:New()
 	local obj = ZO_Object.New(self)
@@ -89,7 +88,8 @@ function BackpackSettings:New()
 end
 
 function BackpackSettings:OnAddOnLoaded()
-	self.data = ZO_SavedVars:NewAccountWide("Backpack_Settings", BACKPACK_DEFAULT_SETTINGS.version, nil, self.BACKPACK_DEFAULT_SETTINGS);
+	BACKPACK.settings = ZO_SavedVars:NewAccountWide("Backpack_Settings", BACKPACK_DEFAULT_SETTINGS.version, nil, BACKPACK_DEFAULT_SETTINGS);
+	LOG_FACTORY:SetStrLevel(BACKPACK.settings.logLevel)
 end
 
 function BackpackSettings:CreateSettingsMenu()

@@ -1,17 +1,20 @@
-BackpackSearchbox = ZO_Object:Subclass();
+BackpackSearchbox = BackpackWindow:Subclass();
 
 function BackpackSearchbox:New()
-	local obj = ZO_Object.New(self);
+	local obj = BackpackWindow.New(self, "BackpackSearchboxWindow");
 	obj.fragment = nil;
-	obj.control = nil;
 	obj:Initialize();
 	return obj;
 end
 
 function BackpackSearchbox:Initialize(  )
-	local name = "BackpackSearchbox"
-	local control = CreateTopLevelWindow(name)
+	
+	local control = self.control
+	assert(control)
+	
+	local name = control:GetName()
 	control:SetDimensions(400, 150)
+	control:ClearAnchors()
 	control:SetAnchor(BOTTOM, GuiRoot, BOTTOM, 0, -100)
 	control:SetMouseEnabled(true)
 	control:SetMovable(true)

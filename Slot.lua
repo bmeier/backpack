@@ -28,7 +28,12 @@ function BackpackSlot:CreateControl()
 	self.control = control;
 end
 
- function BackpackSlot_GetItemInfo( bagId, slotIdx )
+function BackpackSlot:IsEmpty()
+	return self.itemInfo == nil
+end
+
+function BackpackSlot_GetItemInfo( bagId, slotIdx )
+	Log:T("Getting item info ", bagId, ", ", slotIdx)
 	local item = nil;
 
 	local itemId = GetItemInstanceId(bagId, slotIdx);
@@ -40,6 +45,7 @@ end
 			item.count = GetItemTotalCount(bagId, slotIdx);
 			item.name = GetItemName(bagId, slotIdx);
 			item.link = GetItemLink(bagId, slotIdx, LINK_STYLE_DEFAULT);
+			item.linkBrackets = GetItemLink(bagId, slotIdx, LINK_STYLE_BRACKETS)
 			item.type = GetItemType(bagId, slotIdx);
 			item.filter = GetItemFilterTypeInfo(bagId, slotIdx)
 			item.texture, _, _, _, _ = GetItemLinkInfo(item.link);

@@ -8,12 +8,14 @@ libs\LibAddonMenu-1.0.lua
 
 Log.lua
 
-Searchbox.lua
-Scene.lua
+
 
 Window.lua
 Filter.lua
 Bag.lua
+
+Searchbox.lua
+Scene.lua
 
 SlotControl.lua
 Slot.lua

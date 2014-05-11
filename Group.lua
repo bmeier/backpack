@@ -22,6 +22,7 @@ BackpackGroup.control = nil;
 BackpackGroup.fragment = nil;
 BackpackGroup.name = "";
 BackpackGroup.slots = {};
+BackpackGroup.slotLookup = {}
 BackpackGroup.filter = nil;
 BackpackGroup.hidden = false;
 BackpackGroup.settings = {};
@@ -44,4 +45,31 @@ end
 function BackpackGroup:Update() 
 	self.control:Update()
 end
+
+function BackpackGroup:RemoveSlot( slot )
+	local idx = nil
+	for i,s in pairs(self.slots) do
+		if(s == slot) then
+			idx = i	
+		end
+	end
+	
+	if idx then
+		table.remove(self.slots, idx)
+	end
+end
+
+function BackpackGroup:RemoveAllSlots()
+	for i,s in pairs(self.slots) do
+		s.group = nil
+	end
+	self.slots = {}	 
+end
+
+function BackpackGroup:AddSlot( slot )
+	assert( slot )
+	table.insert(self.slots, slot)
+	slot.group = self
+end
+
 

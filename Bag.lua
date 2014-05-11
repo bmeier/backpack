@@ -12,32 +12,48 @@ function BackpackBag:New( id )
 
 	local bag = ZO_Object.New(self);
 	bag.id = id;
-	_, bag.numSlots = GetBagInfo(bag.id);
-	bag.slots = {};
-	for slotIdx=1, bag.numSlots do
-		local slot = BackpackSlot:New(bag, slotIdx)
-		table.insert(bag.slots, slot);
-		if not slot.itemInfo then
-			bag.freeSlots = bag.freeSlots + 1
-		end
-	end
-
-
+	bag:OnUpdate()
 	return bag;
 end
 
+function BackpackBag:OnUpdate(  )
+	local _, newSlotCount = GetBagInfo(self.id);
+	if self.numSlots < newSlotCount then
+		for i=self.numSlots , newSlotCount-1 do
+			table.insert(self.slots, BackpackSlot:New(self, i))
+		end
+		assert(#self.slots == newSlotCount)
+		self.numSlots = newSlotCount
+	elseif self.numSlots > newSlotCount then
+		for i=newSlotCount,self.numSlots-1 do
+			self.slots[i] = nil
+		end
+		assert(#self.slots == newSlotCount)
+		self.numSlots = newSlotCount
+	end
+	
+	self.freeSlots = 0
+	for slotIdx=1, self.numSlots do
+		local slot = self.slots[slotIdx]
+		slot:OnUpdate()
+		
+		if not slot.itemInfo then
+			self.freeSlots = self.freeSlots + 1
+		end
+	end
+end
 
 function BackpackBag:OnSlotUpdated( slotIdx )
 	assert(type(slotIdx) == "number")
 	Log:T("BackpackBag:OnSlotUpdated( slotIdx )")
 	
 	
-	local slot = self.slots[slotIdx];
-	local wasEmpty = slot.itemInfo ~= nil
+	local slot = self.slots[slotIdx+1];
+	local wasEmpty = slot.itemInfo == nil
 	
 	slot:OnUpdate();
 	
-	local isEmpty = slot.itemInfo ~= nil
+	local isEmpty = slot.itemInfo == nil
 	
 	if wasEmpty and not isEmpty then
 		self.freeSlots = self.freeSlots - 1
