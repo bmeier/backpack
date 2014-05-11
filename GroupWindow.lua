@@ -1,19 +1,16 @@
-
 ----------------------------------------
 --  BackpackGroupWindow
 ----------------------------------------
 local Log = LOG_FACTORY:GetLog("BackpackGroupWindow")
 
-
-local ResizeController = ZO_Object:Subclass()
-ResizeController.changeColumns = true
-ResizeController.direction = 0
 local NORTH , EAST , SOUTH , WEST = 0, 1, 2, 3
+local ResizeController = ZO_Object:Subclass()
+ResizeController.direction = 0
+ResizeController.delta = 0
 
 function ResizeController:New( window )
 	local controller = ZO_Object.New(self)
 	controller.window = window
-
 	return controller
 end
 
@@ -24,59 +21,45 @@ function ResizeController:OnResizeStart( ... )
 	local x, y = GetUIMousePosition()
 	local top, left, bottom, right = control:GetTop(), control:GetLeft(), control:GetBottom(), control:GetRight()
 
-	self.prevWidth, self.prevHeight = control:GetDimensions()
-	self.initialWidth = self.prevWidth
-	self.initialHeight = self.initialHeight
-
-	local dir
-	local dxLeft  = math.abs(x-left)
-	local dxRight = math.abs(x-right)
-
-
-
 	local dx = math.min(math.abs(x-left), math.abs(x-right))
 	local dy = math.min(math.abs(y-top), math.abs(y-bottom))
 
 	if dx < dy then
 		if math.abs(x-left) < math.abs(x-right) then
-			dir = WEST
+			self.direction  = WEST
 		else
-			dir = EAST
+			self.direction  = EAST
 		end
 	else
 		if math.abs(y-top) < math.abs(y-bottom) then
-			dir = NORTH
+			self.direction  = NORTH
 		else
-			dir = SOUTH
+			self.direction  = SOUTH
 		end
 	end
-	self.direction = dir
+	
+	self.delta = (BACKPACK.settings.ui.iconSize + BACKPACK.settings.ui.group.padding) * BACKPACK.settings.ui.scale
 end
 
 function ResizeController:OnUpdate( ... )
-	--Log:T("ResizeController:OnUpdate, changing column count: ", self.changeColumnCount)
-
 	local window = self.window
 	local control = self.window.control
 	local scale = BACKPACK.settings.ui.scale
 
-	-- scaled
+	--  already scaled by control:SetScale()
 	local w, h = control:GetWidth(), control:GetHeight()
-
-	--unscaled :(
+	--  unscaled 
 	local prefW, prefH = self.window:GetPrefDimensions()
-	local delta = (BACKPACK.settings.ui.iconSize + BACKPACK.settings.ui.group.padding) * BACKPACK.settings.ui.scale
-
-	--Log:T("w: ", w,", prefW: ", prefW, ", dw: ", dw)
-	--Log:T("h: ", h, ", dh: ", dh)
-	--Log:T("cols: ", window.settings.columns )
+	prefW = prefW * scale; prefH = prefH * scale
+	
+	local rows, columns = window.group.settings.rows, window.group.settings.columns
+	
 	local top, left = control:GetTop(), control:GetLeft()
-	if(self.changeColumns) then
-		local dw = w-(prefW*scale)
-		if dw >= delta then
-			local columns = window.group.settings.columns
-			while dw >=delta and columns < #window.group.slots do
-				dw = dw - delta
+	if self.direction == EAST or self.direction == WEST then
+		local dw = w-prefW
+		if dw >= self.delta then
+			while dw >=self.delta and columns < #window.group.slots do
+				dw = dw - self.delta
 				columns = columns + 1
 			end
 			window:SetColumns(columns)
@@ -86,10 +69,9 @@ function ResizeController:OnUpdate( ... )
 				control:ClearAnchors()
 				control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, left, top)
 			end
-		elseif dw < 0 and window.group.settings.columns > 1 then
-			local columns = window.group.settings.columns
+		elseif dw < 0 and columns > 1 then
 			while dw < 0 and columns > 1 do
-				dw = dw + delta
+				dw = dw + self.delta
 				columns = columns - 1
 			end
 			window:SetColumns(columns)
@@ -101,26 +83,23 @@ function ResizeController:OnUpdate( ... )
 			end
 		end
 	else
-		local dh = h-(prefH*scale)
-		if dh >= delta then
-			local rows = window.group.settings.rows
-			while dh >=delta and rows < #window.group.slots do
-				dh = dh - delta
+		local dh = h-prefH
+		if dh >= self.delta then
+			while dh >=self.delta and rows < #window.group.slots do
+				dh = dh - self.delta
 				rows = rows + 1
 			end
 			window:SetRows(rows)
 			local newWidth, newHeight = window:DoLayout()
-			
 
 			window.control:SetWidth(newWidth)
 			if self.direction == SOUTH then
 				control:ClearAnchors()
 				control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, left, top)
 			end
-		elseif dh < 0 and window.group.settings.rows > 1 then
-			local rows =window.group.settings.rows
+		elseif dh < 0 and rows > 1 then
 			while dh < 0 and rows > 1 do
-				dh = dh + delta
+				dh = dh + self.delta
 				rows = rows - 1
 			end
 			window:SetRows(rows)
@@ -136,9 +115,7 @@ end
 
 function ResizeController:OnResizeStop( ... )
 	EVENT_MANAGER:UnregisterForUpdate(self.window.name)
-	local w, h = self.window:DoLayout()
-	Log:T("pref dimensions: ", w, ", ", h)
-	self.window.control:SetDimensions(w, h)
+	self.window.control:SetDimensions(self.window:DoLayout())
 end
 
 
