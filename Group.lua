@@ -37,7 +37,7 @@ end
 function BackpackGroup:Initialize() 
 	local name = self.name.."Control"
 	self.settings = BACKPACK.settings.ui.groups[name]
-	self.control = BackpackGroupControl:New(self);
+	self.control = BackpackGroupWindow:New(self);
 	self.fragment = BackpackGroupFragment:New(self);
 end
 

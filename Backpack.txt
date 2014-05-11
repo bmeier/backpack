@@ -14,11 +14,15 @@ Scene.lua
 Window.lua
 Filter.lua
 Bag.lua
+
+SlotControl.lua
 Slot.lua
-GroupControl.lua
+
+GroupWindow.lua
 Group.lua
 
 Backpack.lua
+Settings.lua
 Handler.lua
 
 bindings.xml

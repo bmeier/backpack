@@ -1,8 +1,8 @@
 
 ----------------------------------------
---  BackpackGroupControl
+--  BackpackGroupWindow
 ----------------------------------------
-local Log = LOG_FACTORY:GetLog("BackpackGroupControl")
+local Log = LOG_FACTORY:GetLog("BackpackGroupWindow")
 
 
 local ResizeController = ZO_Object:Subclass()
@@ -36,7 +36,6 @@ function ResizeController:OnResizeStart( ... )
 
 	local dx = math.min(math.abs(x-left), math.abs(x-right))
 	local dy = math.min(math.abs(y-top), math.abs(y-bottom))
-	self.changeColumns = dx < dy
 
 	if dx < dy then
 		if math.abs(x-left) < math.abs(x-right) then
@@ -145,18 +144,18 @@ end
 
 
 
-BackpackGroupControl = BackpackWindow:Subclass()
-BackpackGroupControl.group = nil;
-BackpackGroupControl.control = nil;
-BackpackGroupControl.prefWidth = 0
-BackpackGroupControl.prefHeight = 0
-BackpackGroupControl.layoutDirty = false
-BackpackGroupControl.layoutColumns = true
+BackpackGroupWindow = BackpackWindow:Subclass()
+BackpackGroupWindow.group = nil;
+BackpackGroupWindow.control = nil;
+BackpackGroupWindow.prefWidth = 0
+BackpackGroupWindow.prefHeight = 0
+BackpackGroupWindow.layoutDirty = false
+BackpackGroupWindow.layoutColumns = true
 
 
-function BackpackGroupControl:New( group )
+function BackpackGroupWindow:New( group )
 	assert(group)
-	local obj = BackpackWindow.New(self, "BackpackGroupControl".. group.name)
+	local obj = BackpackWindow.New(self, "BackpackGroupWindow".. group.name)
 	assert(obj.control)
 	obj:Initialize(group );
 	obj.resizeController = ResizeController:New(obj)
@@ -164,21 +163,21 @@ function BackpackGroupControl:New( group )
 end
 
 
-function BackpackGroupControl:ApplySettings()
+function BackpackGroupWindow:ApplySettings()
 	BackpackWindow.ApplySettings(self)
 end
 
-function BackpackGroupControl:OnResizeStart(width, height)
-	Log:T("BackpackGroupControl:OnResizeStart(width, height)")
+function BackpackGroupWindow:OnResizeStart(width, height)
+	Log:T("BackpackGroupWindow:OnResizeStart(width, height)")
 	self.resizeController:OnResizeStart()
 end
 
-function BackpackGroupControl:OnResizeStop()
+function BackpackGroupWindow:OnResizeStop()
 	Log:T("OnResizeStop(width, height)")
 	self.resizeController:OnResizeStop()
 end
 
-function BackpackGroupControl:Initialize( group )
+function BackpackGroupWindow:Initialize( group )
 	assert(group)
 	assert(self.control)
 	
@@ -214,7 +213,7 @@ function BackpackGroupControl:Initialize( group )
 end
 
 
-function BackpackGroupControl:SetColumns( columns )
+function BackpackGroupWindow:SetColumns( columns )
 	--Log:T("SetColumns old columns: " .. self.group.settings.columns)
 	--Log:T("SetColumns old rows: " .. self.group.settings.rows)
 	if columns > #self.group.slots then
@@ -235,14 +234,14 @@ function BackpackGroupControl:SetColumns( columns )
  	--Log:T("SetColumns new rows: " .. self.group.settings.rows)
 end
 
-function BackpackGroupControl:SetRows( rows )
+function BackpackGroupWindow:SetRows( rows )
     local columns = math.ceil(#self.group.slots/rows)
     self:SetColumns(columns)
  	self.layoutColumns = false
 end
 
-function BackpackGroupControl:DoLayout()
-	--Log:T("BackpackGroupControl:DoLayout()")
+function BackpackGroupWindow:DoLayout()
+	--Log:T("BackpackGroupWindow:DoLayout()")
 
 	local control = self.control
 	local group = self.group
@@ -287,11 +286,11 @@ assert(rows)
 	return width, windowHeight
 end
 
-function BackpackGroupControl:GetPrefDimensions()
+function BackpackGroupWindow:GetPrefDimensions()
 	return self.prefWidth, self.prefHeight
 end
 
-function BackpackGroupControl:Update(  )
+function BackpackGroupWindow:Update(  )
 	local group   = self.group;
 	local control = self.control;
 
