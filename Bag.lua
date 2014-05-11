@@ -5,7 +5,7 @@ BackpackBag.id = nil;
 BackpackBag.name = "";
 BackpackBag.numSlots = 0;
 BackpackBag.slots = {}
-
+BackpackBag.freeSlots = 0
 
 function BackpackBag:New( id )
 	assert(type(id) == "number")
@@ -17,6 +17,9 @@ function BackpackBag:New( id )
 	for slotIdx=1, bag.numSlots do
 		local slot = BackpackSlot:New(bag, slotIdx)
 		table.insert(bag.slots, slot);
+		if not slot.itemInfo then
+			bag.freeSlots = bag.freeSlots + 1
+		end
 	end
 
 
@@ -27,8 +30,20 @@ end
 function BackpackBag:OnSlotUpdated( slotIdx )
 	assert(type(slotIdx) == "number")
 	Log:T("BackpackBag:OnSlotUpdated( slotIdx )")
+	
+	
 	local slot = self.slots[slotIdx];
+	local wasEmpty = slot.itemInfo ~= nil
+	
 	slot:OnUpdate();
+	
+	local isEmpty = slot.itemInfo ~= nil
+	
+	if wasEmpty and not isEmpty then
+		self.freeSlots = self.freeSlots - 1
+	elseif not wasEmpty and isEmpty then
+		self.freeSlots = self.freeSlots + 1
+	end	
 end
 
 

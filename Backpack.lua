@@ -39,6 +39,8 @@ function Backpack:OnLoad()
 		end
 	end
 
+	BACKPACK_SCENE.emptySlotsLabel:SetText(self.bags[1].freeSlots.."/"..self.bags[1].numSlots)
+
 	if (self.settings.firstRun) then
 		local initialPosition = 0
 		for i, group in pairs(self.groups) do	
@@ -92,6 +94,8 @@ function Backpack:OnSlotUpdate( eventid,  bagId, slotIdx, isNewItem, itemSoundCa
 			Log:D("Updating sot " ..slotIdx)
 			bag:OnSlotUpdated(slotIdx, isNewItem)
 			self:UpdateGroups();
+			
+			BACKPACK_SCENE.emptySlotsLabel:SetText(bag.freeSlots.."/"..bag.numSlots)
 		else
 			Log:W("Slot update dropped, bagId: ", bagId, ", slotIdx: "..slotIdx)
 		end
