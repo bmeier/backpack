@@ -73,8 +73,8 @@ function Backpack:OnLoad()
 	self:ShowBag(self.bags[BAG_BACKPACK])
 	
 	EVENT_MANAGER:RegisterForEvent(Backpack.ADDON_NAME, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, function(...) self:OnSlotUpdate( ... ); end)
-	EVENT_MANAGER:RegisterForEvent(Backpack.ADDON_NAME, EVENT_INVENTORY_BOUGHT_BAG_SPACE, function(...)  self.bags[1]:OnUpdate(); self:UpdateGroups() end)
-	EVENT_MANAGER:RegisterForEvent(Backpack.ADDON_NAME, EVENT_INVENTORY_FULL_UPDATE, function(...) self.bags[1]:OnUpdate(); self:UpdateGroups() end)
+	EVENT_MANAGER:RegisterForEvent(Backpack.ADDON_NAME, EVENT_INVENTORY_BOUGHT_BAG_SPACE, function(...)  self.bags[BAG_BACKPACK]:Update(); self:UpdateGroups() end)
+	EVENT_MANAGER:RegisterForEvent(Backpack.ADDON_NAME, EVENT_INVENTORY_FULL_UPDATE, function(...) self.bags[BAG_BACKPACK]:Update(); self:UpdateGroups() end)
 	Log:D("Backpack loaded.");
 end
 
