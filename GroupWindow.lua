@@ -212,7 +212,13 @@ function BackpackGroupWindow:SetColumns( columns )
 	if not columns then
 		columns = #self.group.slots
 	end
-
+	
+	if columns > #self.group.slots then
+		if(#self.group.slots > 0) then
+			columns = #self.group.slots
+		end
+	end
+	
 	if columns < 1 then
 		columns = 1
 	end
