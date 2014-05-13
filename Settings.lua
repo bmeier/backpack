@@ -13,7 +13,7 @@ local BACKPACK_DEFAULT_SETTINGS = {
 		hideEmptyGroups = true,
 		emptyBorderColor = { 0.33, 0.33, 0.33, 1.0 },
 		iconSize = 64,
-		scale = 0.9,
+		scale = 0.75,
 		group = {
 			font = "ZoFontWinH1",
 			minColumnCount = 3,
@@ -186,7 +186,7 @@ function BackpackSettings:CreateSettingsMenu()
 			name = "default",
 			desc = "Show Lost and Found",
 			tooltip = "",
-			idx = 8
+			idx = 9
 		},
 
 	}
