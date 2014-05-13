@@ -5,11 +5,11 @@ local Log = LOG_FACTORY:GetLog("BackpackGroupWindow")
 
 local NORTH , EAST , SOUTH , WEST = 0, 1, 2, 3
 local ResizeController = ZO_Object:Subclass()
-ResizeController.direction = 0
-ResizeController.delta = 0
 
 function ResizeController:New( window )
 	local controller = ZO_Object.New(self)
+	controller.direction = NORTH
+	controller.delta = 0
 	controller.window = window
 	return controller
 end
@@ -121,87 +121,110 @@ end
 
 
 
-BackpackGroupWindow = BackpackWindow:Subclass()
-BackpackGroupWindow.group = nil;
-BackpackGroupWindow.control = nil;
-BackpackGroupWindow.prefWidth = 0
-BackpackGroupWindow.prefHeight = 0
-BackpackGroupWindow.layoutDirty = true
+BackpackGroupWindow = ZO_Object:Subclass()
 
 function BackpackGroupWindow:New( group )
-	assert(group)
-	local obj = BackpackWindow.New(self, "BackpackGroupWindow".. group.name)
-	assert(obj.control)
-	obj:Initialize(group );
-	obj.resizeController = ResizeController:New(obj)
+	local obj = ZO_Object.New(self)
+	obj:Initialize(group)	
 	return obj;
-end
-
-
-function BackpackGroupWindow:ApplySettings()
-	BackpackWindow.ApplySettings(self)
 end
 
 function BackpackGroupWindow:Initialize( group )
 	assert(group)
-	assert(self.control)
+	
+	
+	self.group = group
+	
+	self.prefWidth = 0
+	self.prefHeight = 0
+	self.layoutDirty = true
 
-	local control = self.control;
-	local name    = control:GetName()
-
+	local control = CreateTopLevelWindow(group.name)
 	control:SetClampedToScreen(BACKPACK.settings.ui.group.clampToScreen);
 	control:SetHidden(true)
 	
+	control:SetMovable(true)
+	control:SetMouseEnabled(true)
 	control:SetResizeHandleSize(MOUSE_CURSOR_RESIZE_NS)
-	control:SetHandler('OnResizeStart', function() Log:T("OnResizeStart"); 
-		self.resizeController:OnResizeStart() 
-	end)
 
-	control:SetHandler('OnResizeStop', function() Log:T("OnResizeStop"); 
-		self.resizeController:OnResizeStop()
-	end)
+	control.backdrop = CreateControl(group.name.."Backdrop", control, CT_BACKDROP)
+	control.backdrop:SetCenterColor(unpack(BACKPACK.settings.ui.group.backdrop.centerColor))
+	control.backdrop:SetEdgeTexture(BACKPACK.settings.ui.group.backdrop.edgeTexture, BACKPACK.settings.ui.group.backdrop.edgeWidth, BACKPACK.settings.ui.group.backdrop.edgeHeight)
+	control.backdrop:SetEdgeColor(unpack(BACKPACK.settings.ui.group.backdrop.edgeColor))
+	control.backdrop:ClearAnchors()
+	control.backdrop:SetAnchor(TOPLEFT, control, TOPLEFT, -BACKPACK.settings.ui.group.insets.left, -BACKPACK.settings.ui.group.insets.top)
+	control.backdrop:SetAnchor(BOTTOMRIGHT, control, BOTTOMRIGHT, BACKPACK.settings.ui.group.insets.right, BACKPACK.settings.ui.group.insets.bottom)
+
+	control:SetHitInsets(-BACKPACK.settings.ui.group.insets.left, -BACKPACK.settings.ui.group.insets.top, BACKPACK.settings.ui.group.insets.right, BACKPACK.settings.ui.group.insets.bottom )
 	
-
-	control.label = CreateControl(name ..  "Label", control, CT_LABEL)
+	control.backdrop:SetHidden(true)
+	
+	control.label = CreateControl(group.name ..  "Label", control, CT_LABEL)
 	control.label:SetText(group.name);
+	control.label:SetWrapMode(TEXT_WRAP_MODE_ELLIPSIS)
 	control.label:SetAnchor(TOPLEFT, control, TOPLEFT, 0, 0);
 	control.label:SetFont(BACKPACK.settings.ui.group.font);
 	control.label:SetParent(control);
 
-	control.content = CreateControl(name .. "ContentPanel", control, CT_CONTROL)
+	control.content = CreateControl(group.name .. "ContentPanel", control, CT_CONTROL)
 	control.content:SetParent(control);
 	control.content:SetAnchor(TOPLEFT, control.label, BOTTOMLEFT, 0, 0);
 
-	self.group = group;
-	self.control = control;
-	self.control:SetHandler("Showing",
+	control:SetHandler('OnResizeStart', function() Log:T("OnResizeStart");
+		self.resizeController:OnResizeStart()
+	end)
+
+	control:SetHandler('OnResizeStop', function() Log:T("OnResizeStop");
+		self.resizeController:OnResizeStop()
+		control.backdrop:SetHidden(true)
+		self:SaveSettings()
+	end)
+
+	control:SetHandler('OnMouseUp', function() Log:T("OnMouseUp"); self:SaveSettings(); end);
+	control:SetHandler('OnMoveStop', function() Log:T("OnMoveStop"); self:SaveSettings(); end)
+
+	control:SetHandler("OnMouseEnter", function() control.backdrop:SetHidden(false) end)
+	control:SetHandler("OnMouseExit",
 	function()
-		if(#self.group.slots > 0) then
-			self.control:SetHidden(false)
-		else
-			self.control:SetHidden(true)
+		local x,y = GetUIMousePosition()
+		local hidden = false
+		if y < control:GetTop() or y > control:GetBottom() then
+			hidden = true
+		elseif x < control:GetLeft() or x > control:GetRight() then
+			hidden = true
 		end
-	end )
+		control.backdrop:SetHidden(hidden)
+	end
+	)
+	
+	self.control = control;
+	self.resizeController = ResizeController:New(self)
+	--self:Update()
+end
 
-
-	self:Update()
+function BackpackGroupWindow:SaveSettings()
+	self.group.settings.top = self.control:GetTop()
+	self.group.settings.left = self.control:GetLeft()
 end
 
 
 function BackpackGroupWindow:SetColumns( columns )
-	if columns > #self.group.slots then
+	if not columns then
 		columns = #self.group.slots
 	end
 
 	if columns < 1 then
 		columns = 1
 	end
-	self.group.settings.columns = columns
 
-	local rows = math.ceil(#self.group.slots/columns)
-	self.group.settings.rows = rows
-	
-	self.layoutDirty = true
+	--if self.group.settings.columns ~= columns then
+		self.group.settings.columns = columns
+
+		local rows = math.ceil(#self.group.slots/columns)
+		self.group.settings.rows = rows
+
+		self.layoutDirty = true
+	--end
 end
 
 function BackpackGroupWindow:SetRows( rows )
@@ -212,6 +235,7 @@ end
 function BackpackGroupWindow:DoLayout()
 	--Log:T("BackpackGroupWindow:DoLayout()")
 	if self.layoutDirty then
+
 		local control = self.control
 		local group = self.group
 		local columns = self.group.settings.columns
@@ -225,16 +249,17 @@ function BackpackGroupWindow:DoLayout()
 		local insets   = BACKPACK.settings.ui.group.insets
 
 
-		local width  = (columns*iconSize) + ((columns-1)*padding);
-		local contentHeight = (rows * iconSize) + ((rows-1)*padding);
+		local width  = self:GetPrefWidth(columns)
+		local contentHeight = self:GetPrefWidth(rows) --wtf
 		local windowHeight = contentHeight + self.control.label:GetFontHeight();
 
 		self.control.content:SetDimensions(width, contentHeight)
+		self.control.label:SetWidth(width)
+		self.control.label:SetHeight(self.control.label:GetFontHeight())
 
 		local row = 1;
 		local col = 1;
 		for  _, slot  in pairs(self.group.slots) do
-			
 			local top =  (row-1)*(iconSize+padding);
 			local left = (col-1)*(iconSize+padding);
 
@@ -261,10 +286,27 @@ function BackpackGroupWindow:GetPrefDimensions()
 	return self.prefWidth, self.prefHeight
 end
 
+function BackpackGroupWindow:GetPrefWidth( columns )
+	local width = 0
+	if columns then
+		if columns > 0 then
+			width = columns*BACKPACK.settings.ui.iconSize + (columns-1) * BACKPACK.settings.ui.group.padding
+		end
+	end
+	return width
+end
+
+function BackpackGroupWindow:GetPrefHeight( rows )
+	local height = self:GetPrefWidth( rows )
+	height = height + self.control.label:GetFontHeight()
+	return height
+end
+
 function BackpackGroupWindow:Update(  )
 	local group   = self.group;
 	local control = self.control;
-
+	
+	self:SetColumns(self.group.settings.columns)
 	control:SetScale(BACKPACK.settings.ui.scale);
 	control:SetClampedToScreen(BACKPACK.settings.ui.group.clampToScreen);
 
@@ -281,7 +323,11 @@ function BackpackGroupWindow:Update(  )
 		slot.control.control:SetHidden(false)
 	end
 
-	self.layoutDirty = true
+
+	
 	local width, height = self:DoLayout()
 	self.control:SetDimensions(width, height)
+	self.control:ClearAnchors()
+	self.control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, self.group.settings.left, self.group.settings.top)
+	
 end

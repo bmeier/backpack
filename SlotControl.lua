@@ -1,5 +1,64 @@
 local Log = LOG_FACTORY:GetLog("Backpack")
 
+local function BackpackSlot_MailItem(bagId, idx)
+	CallSecureProtected("PickupInventoryItem", bagId, idx)
+	SetCursorItemSoundsEnabled(true)
+	CallSecureProtected("PlaceInAttachmentSlot");
+	ClearCursor()
+end
+
+local function BackpackSlot_TradeItem(bagId, idx)
+	CallSecureProtected("PickupInventoryItem", bagId, idx)
+	SetCursorItemSoundsEnabled(true)
+	CallSecureProtected("PlaceInTradeWindow");
+	ClearCursor()
+end
+
+local function BackpackSlot_SellItem(bagId, idx)
+	CallSecureProtected("PickupInventoryItem", bagId, idx)
+	SetCursorItemSoundsEnabled(true)
+	CallSecureProtected("PlaceInStoreWindow");
+	ClearCursor()
+end
+
+local function BackpackSlot_DepositItem(bagId, idx)
+	local numBankSlots = BACKPACK.bags[BAG_BANK].numSlots
+
+	local emptySlotIndex = nil
+	local bagItemId = GetItemInstanceId(bagId, idx)
+	local bagStackSize, _ = GetSlotStackSize(bagId, idx)
+
+	for i=0,numBankSlots-1 do
+		local bankItemId = GetItemInstanceId(BAG_BANK, i)
+		if(bagItemId == bankItemId) then
+			local bankStackSize, maxStackSize = GetSlotStackSize(BAG_BANK, i)
+			if (bankStackSize + bagStackSize) < maxStackSize then
+				emptySlotIndex = i
+				break
+			end
+		end
+	end
+
+	if emptySlotIndex == nil then
+		Log:T("No suitable slots found, using first free bank slot")
+		emptySlotIndex =  FindFirstEmptySlotInBag(BAG_BANK)
+	end
+
+	--	Log:T("Empty slot: ", emptySlotIndex)
+
+	if(emptySlotIndex ~= nil) then
+		Log:D("Depositing item, slot: ", emptySlotIndex)
+		SetCursorItemSoundsEnabled(true)
+		CallSecureProtected("PickupInventoryItem", bagId, idx)
+		CallSecureProtected("PlaceInInventory", BAG_BANK, emptySlotIndex)
+		SetCursorItemSoundsEnabled(false)
+		ClearCursor()
+	else
+	--bank full
+	end
+
+end
+
 BackpackSlotControl = ZO_Object:Subclass();
 BackpackSlotControl.control = nil
 BackpackSlotControl.slot = nil;
@@ -13,16 +72,14 @@ function BackpackSlotControl:New( slot )
 end
 
 function BackpackSlotControl:OnMouseEnter()
+	Log:T("bag: ", self.slot.bag.id, ", slot:", self.slot.idx)
 	if(self.slot.itemInfo) then
 		assert(self.slot.itemInfo.link);
 
 		InitializeTooltip(ItemTooltip)
 		ItemTooltip:SetBagItem(self.slot.bag.id, self.slot.idx)
-		ItemTooltip:ClearAnchors()
-		ItemTooltip:SetAnchor(CENTER)
-		--ItemTooltip:SetHidden(false)
-		if(self.slot.itemInfo.equipable == true) then
 
+		if(self.slot.itemInfo.equipable == true) then
 			ItemTooltip:ShowComparativeTooltips()
 			ZO_PlayShowAnimationOnComparisonTooltip(ComparativeTooltip1)
 			ZO_PlayShowAnimationOnComparisonTooltip(ComparativeTooltip2)
@@ -30,7 +87,6 @@ function BackpackSlotControl:OnMouseEnter()
 		else
 			ZO_Tooltips_SetupDynamicTooltipAnchors(ItemTooltip, self.control)
 		end
-		-- ZO_PopupTooltip_SetLink(self.slot.itemInfo.link);
 	else
 		ItemTooltip:SetHidden(true)
 	end
@@ -58,7 +114,6 @@ function BackpackSlotControl:OnMouseDoubleClick(button)
 		local bagId = self.slot.bag.id;
 		local idx = self.slot.idx;
 		if BACKPACK_SCENE.state == "shown" then
-
 			if self.slot.itemInfo.usable then
 				CallSecureProtected("UseItem",bagId, idx)
 			elseif self.slot.itemInfo.equipable then
@@ -66,28 +121,13 @@ function BackpackSlotControl:OnMouseDoubleClick(button)
 			end
 			ClearCursor()
 		elseif ZO_Store_IsShopping() then
-			CallSecureProtected("PickupInventoryItem", bagId, idx)
-			SetCursorItemSoundsEnabled(true)
-			CallSecureProtected("PlaceInStoreWindow");
-			ClearCursor()
+			BackpackSlot_SellItem(bagId,idx)
 		elseif PLAYER_INVENTORY:IsBanking() then
-			CallSecureProtected("PickupInventoryItem", bagId, idx)
-			SetCursorItemSoundsEnabled(true)
-			local emptySlotIndex = FindFirstEmptySlotInBag(BAG_BANK)
-			if(emptySlotIndex ~= nil) then
-				CallSecureProtected("PlaceInInventory", BAG_BANK, emptySlotIndex)
-			end
-			ClearCursor()
+			BackpackSlot_DepositItem(bagId, idx)
 		elseif TRADE_WINDOW:IsTrading() then
-			CallSecureProtected("PickupInventoryItem", bagId, idx)
-			SetCursorItemSoundsEnabled(true)
-			CallSecureProtected("PlaceInTradeWindow");
-			ClearCursor()
+			BackpackSlot_TradeItem(bagId,idx)
 		elseif MAIL_SEND:GetState() == "shown" then
-			CallSecureProtected("PickupInventoryItem", bagId, idx)
-			SetCursorItemSoundsEnabled(true)
-			CallSecureProtected("PlaceInAttachmentSlot");
-			ClearCursor()
+			BackpackSlot_MailItem(bagId,idx)
 		end
 	end
 end
@@ -101,6 +141,13 @@ function BackpackSlotControl:Initialize()
 	control:SetHandler("OnMouseEnter", function(...)  self:OnMouseEnter(); end)
 	control:SetHandler("OnMouseExit", function(...)  self:OnMouseExit(); end)
 	control:SetHandler("OnMouseDoubleClick", function(control, button) self:OnMouseDoubleClick(button) end)
+	control:SetHandler("OnDragStart",
+	function()
+		if self.slot.itemInfo then
+			CallSecureProtected("PickupInventoryItem", self.slot.bag.id, self.slot.idx)
+		end
+	end
+	)
 
 	control.background = CreateControl(name.."Background", control, CT_TEXTURE);
 	control.background:SetAnchorFill(control);
@@ -128,7 +175,7 @@ end
 
 
 function BackpackSlotControl:Update()
-	Log:T("Updating SlotControl ...");
+	--	Log:T("Updating SlotControl ...");
 	assert(self.slot);
 
 	ClearMenu();
@@ -153,15 +200,6 @@ function BackpackSlotControl:Update()
 		local itemColor = {1, 1, 1, 1}
 		if not item.meetsUsageRequirement then
 			itemColor = {1, 0, 0, 1}
-			-- else
-			-- 	local playerLevel = GetUnitLevel("player")
-			-- 	local itemLevel = GetItemLevel(self.slot.bag.id, self.slot.idx)
-
-			-- 	assert(playerLevel)
-			-- 	assert(itemLevel)
-			-- 	if playerLevel < itemLevel then
-			-- 		itemColor = {1, 0, 0, 1}
-			-- 	end
 		end
 		control.itemTexture:SetColor(unpack(itemColor));
 	else
@@ -181,108 +219,91 @@ function BackpackSlotControl:ShowPopupMenu()
 		local bagId = self.slot.bag.id
 		local idx = self.slot.idx
 		local empty = function() Log:E("Not implemented") end;
-		--
-		if (TRADING_HOUSE:IsAtTradingHouse())  then
-			AddMenuItem("Sell",
-			function()
-				CallSecureProtected("PickupInventoryItem", bagId, idx)
-				SetCursorItemSoundsEnabled(true)
-				CallSecureProtected("PlaceInTransferWindow");
-				
-				ClearCursor()
-				ClearMenu()
-			end)
-		elseif ZO_Store_IsShopping() then
-			AddMenuItem("Sell",
-			function()
-				CallSecureProtected("PickupInventoryItem", bagId, idx)
-				SetCursorItemSoundsEnabled(true)
-				CallSecureProtected("PlaceInStoreWindow");
-				
-				ClearCursor()
-				ClearMenu()
-			end
-			)
-		elseif TRADE_WINDOW:IsTrading() then
-			AddMenuItem("Trade",
-			function()
-				CallSecureProtected("PickupInventoryItem", bagId, idx)
-				SetCursorItemSoundsEnabled(true)
-				CallSecureProtected("PlaceInTradeWindow");
 
-				ClearCursor()
-				ClearMenu()
-			end
-			)
-		elseif PLAYER_INVENTORY:IsBanking() then
-			AddMenuItem("Deposit",
-			function()
-				CallSecureProtected("PickupInventoryItem", bagId, idx)
-				SetCursorItemSoundsEnabled(true)
-				local emptySlotIndex = FindFirstEmptySlotInBag(BAG_BANK)
-				if(emptySlotIndex ~= nil) then
-					CallSecureProtected("PlaceInInventory", BAG_BANK, emptySlotIndex)
+		if bagId == BAG_BACKPACK then
+			if (TRADING_HOUSE:IsAtTradingHouse())  then
+				AddMenuItem("Sell",
+				function()
+					CallSecureProtected("PickupInventoryItem", bagId, idx)
+					SetCursorItemSoundsEnabled(true)
+					CallSecureProtected("PlaceInTransferWindow");
+
+					ClearCursor()
+					ClearMenu()
+				end)
+			elseif ZO_Store_IsShopping() then
+				AddMenuItem("Sell",
+				function()
+					BackpackSlot_SellItem(bagId,idx)
+					ClearMenu()
 				end
-				
-				ClearCursor()
-				ClearMenu()
+				)
+			elseif TRADE_WINDOW:IsTrading() then
+				AddMenuItem("Trade",
+				function()
+					BackpackSlot_TradeItem(bagId,idx)
+					ClearMenu()
+				end
+				)
+			elseif PLAYER_INVENTORY:IsBanking() then
+				AddMenuItem("Deposit",
+				function()
+					BackpackSlot_DepositItem(bagId, idx)
+					ClearMenu()
+				end
+				)
+			elseif not MAIL_SEND:IsHidden() then
+				AddMenuItem("Send",
+				function()
+					BackpackSlot_MailItem(bagId,idx)
+					ClearMenu()
+				end
+				)
 			end
-			)
-		elseif not MAIL_SEND:IsHidden() then
-			AddMenuItem("Send",
-			function()
-				CallSecureProtected("PickupInventoryItem", bagId, idx)
-				SetCursorItemSoundsEnabled(true)
-				CallSecureProtected("PlaceInAttachmentSlot");
-				
-				ClearCursor()
-				ClearMenu()
-			end
-			)
-		end
 
-		if item.count > 1 then
-			AddMenuItem("Split",
-			function()
-				empty();
-				ClearMenu();
+			if item.count > 1 then
+				AddMenuItem("Split",
+				function()
+					empty();
+					ClearMenu();
+				end
+				)
 			end
-			)
-		end
 
-		if(item.usable) then
-			AddMenuItem("Use",
-			function()
-				CallSecureProtected("UseItem",bagId, idx)
-				ClearMenu();
+			if(item.usable) then
+				AddMenuItem("Use",
+				function()
+					CallSecureProtected("UseItem",bagId, idx)
+					ClearMenu();
+				end
+				)
 			end
-			)
-		end
 
-		if(item.equipable) then
-			AddMenuItem("Equip",
-			function()
-				EquipItem(bagId, idx)
-				ClearMenu()
+			if(item.equipable) then
+				AddMenuItem("Equip",
+				function()
+					EquipItem(bagId, idx)
+					ClearMenu()
+				end
+				);
 			end
-			);
-		end
 
-		if(item.enchantable) then
-			AddMenuItem("Enchant",
-			function()
-				ZO_Dialogs_ShowDialog("ENCHANTING", {bag = bagId, index = idx })
-				ClearMenu()
+			if(item.enchantable) then
+				AddMenuItem("Enchant",
+				function()
+					ZO_Dialogs_ShowDialog("ENCHANTING", {bag = bagId, index = idx })
+					ClearMenu()
+				end
+				);
 			end
-			);
-		end
 
-		AddMenuItem("Destroy", function() BackpackSlotControl_DestroyItem(bagId, idx); ClearMenu();  end) -- Log:T(CallSecureProtected("PlaceInWorldLeftClick")) end);--ZO_Dialogs_ShowDialog("DESTROY_ITEM_PROMPT", nil, {mainTextParams = {link, count, GetString(SI_DESTROY_ITEM_CONFIRMATION)}}) end)
+			AddMenuItem("Destroy", function() BackpackSlotControl_DestroyItem(bagId, idx); ClearMenu();  end) -- Log:T(CallSecureProtected("PlaceInWorldLeftClick")) end);--ZO_Dialogs_ShowDialog("DESTROY_ITEM_PROMPT", nil, {mainTextParams = {link, count, GetString(SI_DESTROY_ITEM_CONFIRMATION)}}) end)
+		end
 		AddMenuItem("Link in Chat", function() ZO_LinkHandler_InsertLink(zo_strformat(SI_TOOLTIP_ITEM_NAME, item.linkBrackets)) end);
-		AddMenuItem("Mark as Junk", function() 
+		AddMenuItem("Mark as Junk", function()
 			SetItemIsJunk(bagId, idx, true)
-	        PlaySound(SOUNDS.INVENTORY_ITEM_JUNKED)
-	    end);
+			PlaySound(SOUNDS.INVENTORY_ITEM_JUNKED)
+		end);
 		AddMenuItem("Report Item", function() ZO_FEEDBACK:OpenBrowserByType(BROWSER_TYPE_USER_ITEM_BUG, item.link) end);
 		ShowMenu(self)
 	end

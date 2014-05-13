@@ -7,23 +7,6 @@ function BP_Handler.OnSlashCommand( ... )
 		SCENE_MANAGER:Toggle("backpack");
 		return;
 	end 
-
-	-- local args = ...;
-	-- if(args and #args > 0) then
-	-- 	local cmd = args[1];
-	-- 	if(cmd == group) then
-	-- 		if(#args > 1) then
-	-- 			if(args[2] == "list") then
-	-- 				for i, group in Backpack.groups do
-	-- 					Log:I(i..": "..group.Name);
-	-- 				end
-	-- 			end
-	-- 		end
-	-- 	end
-	-- 	if(cmd) then
-	-- 		cmd.handler(args);
-	-- 	end
-	-- end
 end
 
 function BP_Handler.OnAddonLoaded(eventCode, addOnName)
@@ -32,7 +15,6 @@ function BP_Handler.OnAddonLoaded(eventCode, addOnName)
 		SLASH_COMMANDS["/backpack"] = function( ... ) BP_Handler.OnSlashCommand( ... ); end
 		SLASH_COMMANDS["/rl"] = function( ... ) ReloadUI(); end
 		SLASH_COMMANDS["/reload"] = function( ... ) ReloadUI(); end
-
 
 		BACKPACK:OnLoad();
 	end

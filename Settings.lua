@@ -4,12 +4,12 @@ local BACKPACK_SETTINGS_PANEL = "BACKPACK_SETTINGS_PANEL"
 local BACKPACK_HEADER_DISPLAY_OPTIONS = "BP_MENU_HEADER_DISPLAY_OPTIONS"
 
 
-local BACKPACK_DEFAULT_SETTINGS = { 
-	version = 2,
+local BACKPACK_DEFAULT_SETTINGS = {
+	version = 6,
 	name = "BackpackSettings",
 	logLevel = "Warn",
 	firstRun = true,
-	ui = { 
+	ui = {
 		hideEmptyGroups = true,
 		emptyBorderColor = { 0.33, 0.33, 0.33, 1.0 },
 		iconSize = 64,
@@ -20,48 +20,56 @@ local BACKPACK_DEFAULT_SETTINGS = {
 			maxColumnCount = 10,
 			clampToScreen = true,
 			padding = 4,
-			insets = 40,
+			insets 	= { top = 10,  left=10, bottom=10, right=10},
+			backdrop = {
+				centerTexture = nil,
+				centerColor = { 0, 0, 0, 0.3},
+				edgeTexture = nil,
+				edgeColor = { 0.1, 0.1, 0.1, 0.8},
+				edgeWidth = 1,
+				edgeHeight = 1,
+			},
 		},
 		windows = {
 			['*'] = {
 				top 	= 0,
-				left  	= 0, 
+				left  	= 0,
 				width 	= 100,
 				height 	= 100,
 				insets 	= { top = 10,  left=10, bottom=10, right=10},
-				backdrop = {
-					centerTexture = nil,
-					centerColor = { 0, 0, 0, 0.3},
-					edgeTexture = nil,
-					edgeColor = { 0.1, 0.1, 0.1, 0.8},
-					edgeWidth = 1,
-					edgeHeight = 1,
-				},
 			}
 		},
 
 		groups = {
 			['*'] = {
-				columns = 6,
-				rows = 0
+				['*'] = {
+					top = 15,
+					left = 15,
+					columns =  6,
+					rows =  2
+				}
 			}
 		}
 	},
 
+	bags =  {
+
+	},
+
 	scenes = {
-		store = { 
+		store = {
 			name = "store",
 			visible = true
 		},
-		bank = { 
+		bank = {
 			name = "bank",
 			visible = true
 		},
-		trade = { 
+		trade = {
 			name = "trade",
 			visible = true
 		},
-		tradinghouse = { 
+		tradinghouse = {
 			name = "tradinghouse",
 			visible = true
 		},
@@ -81,10 +89,26 @@ local BACKPACK_DEFAULT_SETTINGS = {
 }
 
 BackpackSettings = ZO_Object:Subclass()
+BackpackSettings.savedVars = nil
 
 function BackpackSettings:New()
 	local obj = ZO_Object.New(self)
+
+	obj.uiWidth = math.floor(GuiRoot:GetWidth() + 0.5)
+	obj.uiHeight = math.floor(GuiRoot:GetHeight() + 0.5)
+
+	obj.widthFactor = obj.uiWidth / 1920
+	obj.heightFactor = obj.uiHeight / 1080
+
 	return obj
+end
+
+function BackpackSettings:GetResIndependentPos(x, y)
+	local rX, rY = nil, nil
+	if x then rX = x*self.widthFactor end
+	if y then rY = y*self.heightFactor end
+
+	return rX, rY
 end
 
 function BackpackSettings:OnAddOnLoaded()
@@ -95,7 +119,7 @@ end
 function BackpackSettings:CreateSettingsMenu()
 	local LAM = LibStub("LibAddonMenu-1.0");
 	assert(LAM)
-	
+
 	local menu = LAM:CreateControlPanel(BACKPACK_SETTINGS_PANEL, "Backpack")
 
 	LAM:AddHeader(menu, BACKPACK_HEADER_DISPLAY_OPTIONS, "Display Options")
