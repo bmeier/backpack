@@ -43,8 +43,8 @@ local BACKPACK_DEFAULT_SETTINGS = {
 		groups = {
 			['*'] = {
 				['*'] = {
-					top = 15,
-					left = 15,
+					top = 50,
+					left = 50,
 					columns =  6,
 					rows =  2
 				}
