@@ -43,7 +43,7 @@ local BACKPACK_DEFAULT_SETTINGS = {
 		groups = {
 			['*'] = {
 				['*'] = {
-					top = 50,
+					top = 100,
 					left = 50,
 					columns =  6,
 					rows =  2
@@ -72,18 +72,6 @@ local BACKPACK_DEFAULT_SETTINGS = {
 			visible = true
 		},
 	},
-
-	groups = {
-		empty = true,
-		default = true,
-		weapons = true,
-		apparel = true,
-		consumable = true,
-		crafting = true,
-		misc = true,
-		quest = true,
-		junk = true
-	}
 }
 
 BackpackSettings = ZO_Object:Subclass()
