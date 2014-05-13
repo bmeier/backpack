@@ -137,6 +137,7 @@ function BackpackGroupWindow:Initialize( group )
 	
 	self.prefWidth = 0
 	self.prefHeight = 0
+	self.minColumnCount = 1
 	self.layoutDirty = true
 
 	local control = CreateTopLevelWindow(group.name)
@@ -217,6 +218,10 @@ function BackpackGroupWindow:SetColumns( columns )
 		if(#self.group.slots > 0) then
 			columns = #self.group.slots
 		end
+	end
+	
+	if columns < self.minColumnCount then
+		columns = self.minColumnCount
 	end
 	
 	if columns < 1 then
@@ -311,6 +316,14 @@ end
 function BackpackGroupWindow:Update(  )
 	local group   = self.group;
 	local control = self.control;
+	
+	local availHeight = GuiRoot:GetHeight()/BACKPACK.settings.ui.scale
+	local maxRows = math.floor((availHeight + BACKPACK.settings.ui.group.padding) / (BACKPACK.settings.ui.iconSize + BACKPACK.settings.ui.group.padding ))
+	maxRows = maxRows - 2
+	if(maxRows < 1) then
+		maxRows = 1
+	end
+	self.minColumnCount = math.ceil(#self.group.slots / maxRows) 
 	
 	self:SetColumns(self.group.settings.columns)
 	control:SetScale(BACKPACK.settings.ui.scale);
