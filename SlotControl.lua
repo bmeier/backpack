@@ -207,6 +207,13 @@ function BackpackSlotControl:Update()
 		control.label:SetHidden(true);
 		control.itemTexture:SetHidden(true);
 	end
+	
+	if(self.slot.bag.id == BAG_BANK) then
+		control.itemTexture:SetDesaturation(1)
+	else
+		control.itemTexture:SetDesaturation(0)
+	end
+	
 	control.border:SetColor(color:UnpackRGB());
 end
 
