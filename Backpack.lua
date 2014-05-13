@@ -64,6 +64,10 @@ function Backpack:OnLoad()
 			initialPosition = initialPosition + 30
 			self.settings.firstRun = false
 		end
+		
+		-- omfg 
+		self.settings.ui.groups["Empty"].hidden = true
+		self.groups[8].fragment.forceHidden = true
 	end
 	
 	self:ShowBag(self.bags[BAG_BACKPACK])
@@ -186,49 +190,31 @@ function Backpack:CreateDefaultGroups()
 
 	local group = nil;
 	group = BackpackGroup:New("Weapons", CreateFilter(FILTER_TYPES.FilterType, ITEMFILTERTYPE_WEAPONS));
-	
-	group.hidden = not self.settings.groups.weapons
 	table.insert(self.groups, group)
 
 	group =	BackpackGroup:New("Apparel", CreateFilter(FILTER_TYPES.FilterType, ITEMFILTERTYPE_ARMOR))
-	
-	group.hidden = not self.settings.groups.apparel
 	table.insert(self.groups, group)
 
 	group = BackpackGroup:New("Consumable", CreateFilter(FILTER_TYPES.FilterType, ITEMFILTERTYPE_CONSUMABLE))
-	
-	group.hidden = not self.settings.groups.consumable
 	table.insert(self.groups, group)
 
 
 	group = BackpackGroup:New("Crafting", CreateFilter(FILTER_TYPES.FilterType, ITEMFILTERTYPE_CRAFTING))
-	
-	group.hidden = not self.settings.groups.crafting
 	table.insert(self.groups, group)
 
 	group = BackpackGroup:New("Misc", CreateFilter(FILTER_TYPES.FilterType, ITEMFILTERTYPE_MISCELLANEOUS))
-	
-	group.hidden = not self.settings.groups.misc
 	table.insert(self.groups, group)
 
 	group = BackpackGroup:New("Quest", CreateFilter(FILTER_TYPES.FilterType, ITEMFILTERTYPE_QUEST))
-	
-	group.hidden = not self.settings.groups.quest
 	table.insert(self.groups, group)
 
 	group = BackpackGroup:New("Junk", CreateFilter(FILTER_TYPES.FilterType, ITEMFILTERTYPE_JUNK))
-	
-	group.hidden = not self.settings.groups.junk
 	table.insert(self.groups, group)
 
 	group = BackpackGroup:New("Empty", emptySlots)
-	
-	group.hidden = not self.settings.groups.empty
 	table.insert(self.groups, group)
 
 	group = BackpackGroup:New("Lost and Found", defaultFilter)
-	
-	group.hidden = not self.settings.groups.default
 	table.insert(self.groups, group)
 end
 
