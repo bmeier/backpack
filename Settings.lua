@@ -5,7 +5,7 @@ local BACKPACK_HEADER_DISPLAY_OPTIONS = "BP_MENU_HEADER_DISPLAY_OPTIONS"
 
 
 local BACKPACK_DEFAULT_SETTINGS = {
-	version = 6,
+	version = 3,
 	name = "BackpackSettings",
 	logLevel = "Warn",
 	firstRun = true,
