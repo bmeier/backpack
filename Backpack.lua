@@ -46,7 +46,6 @@ function Backpack:OnLoad()
 	end
 	
 	for name, settings in pairs(self.settings.scenes) do
-		
 			local scene = SCENE_MANAGER:GetScene(name)
 			scene:RegisterCallback("StateChange", 
 			function(oldState, newState)
@@ -55,11 +54,10 @@ function Backpack:OnLoad()
 				end
 			end)
 	end
-	BACKPACK_SCENE.emptySlotsLabel:SetText(self.bags[self.currentBag].freeSlots.."/"..self.bags[self.currentBag].numSlots)
 	SCENE_MANAGER:Add(BACKPACK_SCENE);
 
 	if (self.settings.firstRun) then
-		local initialPosition = 0
+		local initialPosition = 50
 		for i, group in pairs(self.groups) do
 			group.window.control:ClearAnchors();
 			group.window.control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, initialPosition, initialPosition)
@@ -67,8 +65,9 @@ function Backpack:OnLoad()
 			self.settings.firstRun = false
 		end
 	end
-
-
+	
+	self:ShowBag(self.bags[BAG_BACKPACK])
+	
 	EVENT_MANAGER:RegisterForEvent(Backpack.ADDON_NAME, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, function(...) self:OnSlotUpdate( ... ); end)
 	EVENT_MANAGER:RegisterForEvent(Backpack.ADDON_NAME, EVENT_INVENTORY_BOUGHT_BAG_SPACE, function(...)  self.bags[1]:OnUpdate(); self:UpdateGroups() end)
 	EVENT_MANAGER:RegisterForEvent(Backpack.ADDON_NAME, EVENT_INVENTORY_FULL_UPDATE, function(...) self.bags[1]:OnUpdate(); self:UpdateGroups() end)
@@ -237,7 +236,6 @@ function Backpack:UpdateGroups()
 	Log:D("Updating groups ...");
 	local bag = self.bags[self.currentBag];
 	local tocheck = bag.slots;
-
 	for _,group in pairs(self.groups) do
 		group:RemoveAll()
 		Log:T("checking "..#tocheck.." slots(s).");
@@ -253,30 +251,12 @@ function Backpack:UpdateGroups()
 				table.insert(unmatched, slot);
 			end
 		end
-		tocheck = unmatched;
-
-		group.hidden = #group.slots == 0
-		if group.hidden then
-			Log:T("Update Groups - Hiding group ", group.name)
-			group.window.control:SetHidden(true)
-		else
-			if(group.fragment:IsShowing()) then
-				group.window.control:SetHidden(false)
-			end
-		end
-		Log:D(group.name .. " filter matched "..#group.slots.." slots(s).");
-	end
-
-	assert(#tocheck == 0)
-
-	for _, group in pairs(self.groups) do
-		if #group.slots == 0 then
-
-		end
 		group.settings = self.settings.ui.groups[group.name][self.currentBag];
 		group:Update();
+		tocheck = unmatched;
+		Log:D(group.name .. " filter matched "..#group.slots.." slots(s).");
 	end
-
+	assert(#tocheck == 0)
 end
 
 function Backpack:CreateBags()

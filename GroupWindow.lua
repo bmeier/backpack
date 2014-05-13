@@ -201,6 +201,8 @@ function BackpackGroupWindow:Initialize( group )
 	self.control = control;
 	self.resizeController = ResizeController:New(self)
 	--self:Update()
+	
+
 end
 
 function BackpackGroupWindow:SaveSettings()

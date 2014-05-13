@@ -47,13 +47,11 @@ local BACKPACK_DEFAULT_SETTINGS = {
 					left = 50,
 					columns =  6,
 					rows =  2
-				}
-			}
+				},
+				hidden = false
+			},
+			
 		}
-	},
-
-	bags =  {
-
 	},
 
 	scenes = {
@@ -208,14 +206,14 @@ function BackpackSettings:CreateSettingsMenu()
 		for _, info in pairs(groupInfos) do
 			LAM:AddCheckbox(menu, "BP_HIDE_GROUP_"..zo_strupper(info.name), info.desc, tooltip,
 			function()
-				return BACKPACK.settings.groups[info.name]
+				local g = BACKPACK.groups[info.idx];
+				return not BACKPACK.settings.ui.groups[g.name].hidden 
 			end,
 			function(val)
-				BACKPACK.settings.groups[info.name]  = val
+				--changing group indices in Backpack.lua will break settings :(
 				local g = BACKPACK.groups[info.idx];
-				if g then
-					g.hidden = not (val == true)
-				end
+				BACKPACK.settings.ui.groups[g.name].hidden = not val
+				g.fragment.forceHidden = not val
 			end
 			)
 		end
