@@ -1,0 +1,7 @@
+<GuiXml>
+	<Controls>
+		<Label name="BP_Label" font="ZoFontWinH3"
+			color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED"
+			modifyTextType="UPPERCASE" virtual="true" />
+	</Controls>
+</GuiXml>

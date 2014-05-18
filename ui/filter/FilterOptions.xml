@@ -1,0 +1,34 @@
+<GuiXml>
+	<Controls>
+		<Label name="BP_FilterOptionsLabel" font="ZoFontWinH3"
+			color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED"
+			modifyTextType="UPPERCASE" virtual="true" />
+
+		<Backdrop name="BP_FilterOptionsTextField" inherits="ZO_EditBackdrop"
+			virtual="true">
+			<Dimensions x="300" />
+			<Controls>
+				<EditBox name="$(parent)Edit" inherits="ZO_DefaultEditForBackdrop"
+					font="ZoFontWinT1" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL"
+					maxInputCharacters="50" />
+			</Controls>
+		</Backdrop>
+		
+		<Control name="BP_FilterOptions" virtual="true">
+			<Controls>
+				<Label name="$(parent)Title" font="ZoFontWinH2" text="Filter Options"
+					horizontalAlignment="CENTER" modifyTextType="UPPERCASE">
+					<Dimensions x="360" />
+					<Anchor point="TOPLEFT"/>
+				</Label>
+
+				<Texture name="$(parent)Divider"
+					textureFile="EsoUI/Art/Miscellaneous/horizontalDivider.dds"
+					excludeFromResizeToFitExtents="true">
+					<Dimensions x="512" y="8" />
+					<Anchor point="TOP" relativeTo="$(parent)Title" relativePoint="BOTTOM"/>
+				</Texture>
+			</Controls>
+		</Control>
+	</Controls>
+</GuiXml>

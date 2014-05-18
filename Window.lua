@@ -1,29 +1,26 @@
 local Log = LOG_FACTORY:GetLog("BackpackWindow")
 
 BackpackWindow = ZO_CallbackObject:Subclass()
-function BackpackWindow:New( name )
+function BackpackWindow:New( name, settings )
 	local window = ZO_CallbackObject.New(self)
-	window:InitializeWindow( name )
+	window:InitializeWindow( name, settings )
 	return window;
 end
 
-function BackpackWindow:InitializeWindow( name )
+function BackpackWindow:InitializeWindow( name, settings )
 	self.name = name
-	self.control = CreateTopLevelWindow( name )
-	self.settings =  BACKPACK.settings.ui.windows[name] 
-	assert(self.control)
+	self.window = CreateTopLevelWindow( name )
+	self.settings =  settings or BACKPACK.settings.ui.windows[name] 
+	assert(self.window)
 	assert(self.settings)
 
 
-	self.control:SetMovable(true)
-	self.control:SetMouseEnabled(true)
+	self.window:SetMovable(true)
+	self.window:SetMouseEnabled(true)
 
-	self.control:SetHandler('OnMouseDown', function() Log:T("OnMouseDown"); self:OnMouseDown() end)
-	self.control:SetHandler('OnMouseUp', function() Log:T("OnMouseUp"); self:SaveSettings(); end);
-	self.control:SetHandler('OnMoveStop', function() Log:T("OnMoveStop"); self:SaveSettings(); end)
-	self.control.backdrop = CreateControl(name.."Backdrop", self.control, CT_BACKDROP)
-	self.control.backdrop:SetAnchorFill(self.control)
-
+	self.window:SetHandler('OnMouseDown', function() Log:T("OnMouseDown"); self:OnMouseDown() end)
+	self.window:SetHandler('OnMouseUp', function() Log:T("OnMouseUp"); self:SaveSettings(); end);
+	self.window:SetHandler('OnMoveStop', function() Log:T("OnMoveStop"); self:SaveSettings(); end)
 	self:ApplySettings()
 end
 
@@ -31,14 +28,6 @@ function BackpackWindow:OnMouseDown()
 
 end
 
-function BackpackWindow:OnResizeStart(width, height)
-
-end
-
-function BackpackWindow:OnResizeStop(width, height)
-	Log:T("BackpackWindow:OnResize(width, height)")
-	self:SaveSettings()
-end
 
 function BackpackWindow:DoLayout()
 	Log:T("BackpackWindow:DoLayout()")
@@ -54,45 +43,32 @@ end
 
 function BackpackWindow:ApplySettings()
 	local settings = self.settings
-	local control  = self.control
-	assert(control)
+	local window  = self.window
+	assert(window)
 	assert(settings)
 
-	control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, settings.left, settings.top)
-	
-	--control.backdrop:SetCenterTexture(settings.backdrop.centerTexture)
-	control.backdrop:SetCenterColor(unpack(settings.backdrop.centerColor))
-
-	control.backdrop:SetEdgeTexture(settings.backdrop.edgeTexture, settings.backdrop.edgeWidth, settings.backdrop.edgeHeight)
-	control.backdrop:SetEdgeColor(unpack(settings.backdrop.edgeColor))
-
-	control.backdrop:ClearAnchors()
-	control.backdrop:SetAnchor(TOPLEFT, control, TOPLEFT, -settings.insets.left, -settings.insets.top)
-	control.backdrop:SetAnchor(BOTTOMRIGHT, control, BOTTOMRIGHT, settings.insets.right, settings.insets.bottom)
-	control:SetHitInsets(-settings.insets.left, -settings.insets.top, settings.insets.right, settings.insets.bottom )
+	window:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, settings.left, settings.top)
 end
 
 function BackpackWindow:SaveSettings()
 	local settings = self.settings
-	local control  = self.control
-	assert(control)
+	local window  = self.window
+	assert(window)
 	assert(settings)
-	settings.top = control:GetTop()
-	settings.left = control:GetLeft()	
-	settings.width = control:GetWidth()
-	settings.height = control:GetHeight()
+	settings.top = window:GetTop()
+	settings.left = window:GetLeft()	
+	settings.width = window:GetWidth()
+	settings.height = window:GetHeight()
 end
 
 function BackpackWindow:Hide( )
-	self.control:SetHidden(true)
+	self.window:SetHidden(true)
 end
 
 function BackpackWindow:Show( )
-	self.control:SetHidden(false)
+	self.window:SetHidden(false)
 end
 
 function BackpackWindow:Toggle( )
-	self.control:SetHidden(not self.control:IsHidden())
+	self.window:SetHidden(not self.control:IsHidden())
 end
-
-TestWindow = nil

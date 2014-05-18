@@ -1,14 +1,15 @@
 local Log = LOG_FACTORY:GetLog("Filter");
 
 FILTER_TYPES = {
-	Or = 0,
-	And = 1,
-	ItemType = 2,
-	EmptySlot = 3,
-	FilterType = 4,
-	ItemName = 5,
-	ItemQuality = 6,
-	Durability = 7,
+	Default = 0,
+	Or = 1,
+	And = 2,
+	ItemType = 3,
+	EmptySlot = 4,
+	FilterType = 5,
+	ItemName = 6,
+	ItemQuality = 7,
+	Durability = 8,
 };
 
 Filter = ZO_Object:Subclass();
@@ -22,7 +23,7 @@ function Filter:New( type )
 	r.name = "Default"
 	r.description = "Matches all items"
 	return r;
-end 
+end
 
 function Filter:Matches( item )
 	--Log:T("Filter:Matches(item)")
@@ -34,7 +35,7 @@ function EmptyFilter:New( )
 	local r = ZO_Object.New(self);
 	r.type = FILTER_TYPES.EmptySlot;
 	return r;
-end 
+end
 
 function EmptyFilter:Matches( slot )
 	--Log:T("EmptyFilter:Matches(item)")
@@ -84,7 +85,7 @@ function AndFilter:Matches(item)
 end
 
 GenericFilter = ZO_Object:Subclass();
-function GenericFilter:New( filter ) 
+function GenericFilter:New( filter )
 	local r = ZO_Object:New(self);
 	r.func = filter;
 	return r;
@@ -98,7 +99,7 @@ ItemNameFilter = ZO_Object:Subclass();
 function ItemNameFilter:New( name )
 	local r = ZO_Object.New(self);
 	self.ItemName = name;
-		return r;
+	return r;
 end
 
 function ItemNameFilter:Matches(item)
@@ -151,15 +152,12 @@ function filter(items, n, f)
 			itemCount = itemCount + 1;
 			r[itemCount] = items[i];
 		end
-	end 
+	end
 	DEBUG(itemCount.." items passed the filter.");
 	return itemCount, r;
-end 
+end
 
-local FILTER = {};
-FILTER[FILTER_TYPES.ItemType] = function( ... ) return ItemTypeFilter:New( ... ) end;
-
-function CreateFilter(filterType, ...) 
+function CreateFilter(filterType, ...)
 	local filter = nil;
 	if(filterType == FILTER_TYPES.And) then
 		filter = AndFilter:New( ... );

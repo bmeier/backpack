@@ -5,7 +5,7 @@ local BACKPACK_HEADER_DISPLAY_OPTIONS = "BP_MENU_HEADER_DISPLAY_OPTIONS"
 
 
 local BACKPACK_DEFAULT_SETTINGS = {
-	version = 3,
+	version = 4,
 	name = "BackpackSettings",
 	logLevel = "Warn",
 	firstRun = true,
@@ -48,9 +48,8 @@ local BACKPACK_DEFAULT_SETTINGS = {
 					columns =  6,
 					rows =  2
 				},
-				hidden = false
 			},
-			
+
 		}
 	},
 
@@ -71,6 +70,14 @@ local BACKPACK_DEFAULT_SETTINGS = {
 			name = "tradinghouse",
 			visible = true
 		},
+	},
+
+	filter = {
+
+	},
+	
+	groups = {
+	
 	},
 }
 
@@ -125,88 +132,9 @@ function BackpackSettings:CreateSettingsMenu()
 	)
 
 
-	LAM:AddHeader(menu, "BP_MENU_HEADER_GROUPS", "Groups")
-
-	local groupInfos = {
-		{
-			name = "weapons",
-			desc = "Show Weapons",
-			tooltip = "",
-			idx = 1
-		},
-		{
-			name = "apparel",
-			desc = "Show Apparel",
-			tooltip = "",
-			idx = 2
-		},
-		{
-			name = "consumable",
-			desc = "Show Consumable",
-			tooltip = "",
-			idx = 3
-		},
-		{
-			name = "crafting",
-			desc = "Show Crafting",
-			tooltip = "",
-			idx = 4
-		},
-
-		{
-			name = "misc",
-			desc = "Show Miscallaneous",
-			tooltip = "",
-			idx = 5
-		},
-
-		--		{
-		--			name = "quest",
-		--			desc = "Show Quest",
-		--			tooltip = "",
-		--			idx = 6
-		--		},
+	--LAM:AddHeader(menu, "BP_MENU_HEADER_GROUPS", "Groups")
 
 
-		{
-			name = "junk",
-			desc = "Show Junk",
-			tooltip = "",
-			idx = 7
-		},
-
-		{
-			name = "empty",
-			desc = "Show Empty Slots",
-			tooltip = "",
-			idx = 8
-		},
-
-		{
-			name = "default",
-			desc = "Show Lost and Found",
-			tooltip = "",
-			idx = 9
-		},
-
-	}
-	local addGroups = function(infos)
-		for _, info in pairs(groupInfos) do
-			LAM:AddCheckbox(menu, "BP_HIDE_GROUP_"..zo_strupper(info.name), info.desc, tooltip,
-			function()
-				local g = BACKPACK.groups[info.idx];
-				return not BACKPACK.settings.ui.groups[g.name].hidden 
-			end,
-			function(val)
-				--changing group indices in Backpack.lua will break settings :(
-				local g = BACKPACK.groups[info.idx];
-				BACKPACK.settings.ui.groups[g.name].hidden = not val
-				g.fragment.forceHidden = not val
-			end
-			)
-		end
-	end
-	addGroups(groupInfos);
 	LAM:AddHeader(menu, "BP_MENU_HEADER_INTERACTION", "Interaction")
 	LAM:AddCheckbox(menu, "BP_SHOW_AT_STORE", "Show at Store", "",
 	function() return BACKPACK.settings.scenes.store.visible end,

@@ -68,18 +68,18 @@ end
 function Log.SafeToString( obj )
 	if(obj == nil) then
 		return "<nil>";
-	elseif( type(obj) == "string" ) then
-		return obj;
-	elseif( type(obj) == "number" ) then
-		return ""..obj;
-	elseif(type(obj) == "function") then
-		return "function";
-	elseif(type(obj) == "table") then
-		return "table"
-	elseif(type(obj) == "boolean") then
-		if (obj == true) then return "true" else return "false" end
+--	elseif( type(obj) == "string" ) then
+--		return obj;
+--	elseif( type(obj) == "number" ) then
+--		return ""..obj;
+--	elseif(type(obj) == "function") then
+--		return "function";
+--	elseif(type(obj) == "table") then
+--		return "table@"..tostring(obj)
+--	elseif(type(obj) == "boolean") then
+--		if (obj == true) then return "true" else return "false" end
 	end
-	return "<unkown>"
+	return tostring(obj)
 
 end
 
@@ -127,5 +127,5 @@ function Factory:GetLog( name )
 end
 LOG_FACTORY = Factory:New();
 
-
+backpack.LOG_FACTORY = LOG_FACTORY
 

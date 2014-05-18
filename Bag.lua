@@ -82,7 +82,7 @@ function BackpackBag:UpdateSlot( slotIdx )
 	end
 end
 
-
+backpack.Bag = BackpackBag
 
 
 

@@ -120,36 +120,40 @@ end
 
 
 
-
+local nextId = 0
 BackpackGroupWindow = ZO_Object:Subclass()
 
 function BackpackGroupWindow:New( group )
 	local obj = ZO_Object.New(self)
-	obj:Initialize(group)	
+	obj:Initialize(group)
 	return obj;
 end
 
 function BackpackGroupWindow:Initialize( group )
 	assert(group)
-	
-	
+
+
 	self.group = group
-	
+
 	self.prefWidth = 0
 	self.prefHeight = 0
 	self.minColumnCount = 1
 	self.maxColumnCount = 1
 	self.layoutDirty = true
 
-	local control = CreateTopLevelWindow(group.name)
+	local name = "BP_GroupWindow"..nextId
+	nextId = nextId + 1
+
+	local control = CreateTopLevelWindow(name)
+
 	control:SetClampedToScreen(BACKPACK.settings.ui.group.clampToScreen);
 	control:SetHidden(true)
-	
+
 	control:SetMovable(true)
 	control:SetMouseEnabled(true)
 	control:SetResizeHandleSize(MOUSE_CURSOR_RESIZE_NS)
 
-	control.backdrop = CreateControl(group.name.."Backdrop", control, CT_BACKDROP)
+	control.backdrop = CreateControl(name.."Backdrop", control, CT_BACKDROP)
 	control.backdrop:SetCenterColor(unpack(BACKPACK.settings.ui.group.backdrop.centerColor))
 	control.backdrop:SetEdgeTexture(BACKPACK.settings.ui.group.backdrop.edgeTexture, BACKPACK.settings.ui.group.backdrop.edgeWidth, BACKPACK.settings.ui.group.backdrop.edgeHeight)
 	control.backdrop:SetEdgeColor(unpack(BACKPACK.settings.ui.group.backdrop.edgeColor))
@@ -158,17 +162,17 @@ function BackpackGroupWindow:Initialize( group )
 	control.backdrop:SetAnchor(BOTTOMRIGHT, control, BOTTOMRIGHT, BACKPACK.settings.ui.group.insets.right, BACKPACK.settings.ui.group.insets.bottom)
 
 	control:SetHitInsets(-BACKPACK.settings.ui.group.insets.left, -BACKPACK.settings.ui.group.insets.top, BACKPACK.settings.ui.group.insets.right, BACKPACK.settings.ui.group.insets.bottom )
-	
+
 	control.backdrop:SetHidden(true)
-	
-	control.label = CreateControl(group.name ..  "Label", control, CT_LABEL)
+
+	control.label = CreateControl(name ..  "Label", control, CT_LABEL)
 	control.label:SetText(group.name);
 	control.label:SetWrapMode(TEXT_WRAP_MODE_ELLIPSIS)
 	control.label:SetAnchor(TOPLEFT, control, TOPLEFT, 0, 0);
 	control.label:SetFont(BACKPACK.settings.ui.group.font);
 	control.label:SetParent(control);
 
-	control.content = CreateControl(group.name .. "ContentPanel", control, CT_CONTROL)
+	control.content = CreateControl(name .. "ContentPanel", control, CT_CONTROL)
 	control.content:SetParent(control);
 	control.content:SetAnchor(TOPLEFT, control.label, BOTTOMLEFT, 0, 0);
 
@@ -182,7 +186,15 @@ function BackpackGroupWindow:Initialize( group )
 		self:SaveSettings()
 	end)
 
-	control:SetHandler('OnMouseUp', function() Log:T("OnMouseUp"); self:SaveSettings(); end);
+	control:SetHandler('OnMouseUp',
+	function(control, button, ...)
+		Log:T("OnMouseUp: ", ...);
+		if button == 2 then
+			self:ShowPopupMenu()
+		end
+		self:SaveSettings();
+	end
+	)
 	control:SetHandler('OnMoveStop', function() Log:T("OnMoveStop"); self:SaveSettings(); end)
 
 	control:SetHandler("OnMouseEnter", function() control.backdrop:SetHidden(false) end)
@@ -198,11 +210,13 @@ function BackpackGroupWindow:Initialize( group )
 		control.backdrop:SetHidden(hidden)
 	end
 	)
-	
+
+
+
 	self.control = control;
 	self.resizeController = ResizeController:New(self)
 	--self:Update()
-	
+
 
 end
 
@@ -216,32 +230,32 @@ function BackpackGroupWindow:SetColumns( columns )
 	if not columns then
 		columns = #self.group.slots
 	end
-	
+
 	if columns > #self.group.slots then
 		if(#self.group.slots > 0) then
 			columns = #self.group.slots
 		end
 	end
-	
+
 	if columns < self.minColumnCount then
 		columns = self.minColumnCount
 	end
-	
+
 	if columns < 1 then
 		columns = 1
 	end
-	
+
 	if columns > self.maxColumnCount then
 		columns = self.maxColumnCount
 	end
 
 	--if self.group.settings.columns ~= columns then
-		self.group.settings.columns = columns
+	self.group.settings.columns = columns
 
-		local rows = math.ceil(#self.group.slots/columns)
-		self.group.settings.rows = rows
+	local rows = math.ceil(#self.group.slots/columns)
+	self.group.settings.rows = rows
 
-		self.layoutDirty = true
+	self.layoutDirty = true
 	--end
 end
 
@@ -283,7 +297,7 @@ function BackpackGroupWindow:DoLayout()
 
 			slot.control.control:ClearAnchors()
 			slot.control.control:SetAnchor(TOPLEFT, control.content, TOPLEFT, left, top);
-
+			slot.control.control:SetHidden(false)
 			if(col == columns) then
 				row = row + 1;
 				col= 1;
@@ -323,7 +337,7 @@ end
 function BackpackGroupWindow:Update(  )
 	local group   = self.group;
 	local control = self.control;
-	
+
 	local availHeight = GuiRoot:GetHeight()/BACKPACK.settings.ui.scale
 	local availWidth = GuiRoot:GetWidth()/BACKPACK.settings.ui.scale
 	local maxRows = math.floor((availHeight + BACKPACK.settings.ui.group.padding) / (BACKPACK.settings.ui.iconSize + BACKPACK.settings.ui.group.padding ))
@@ -331,20 +345,20 @@ function BackpackGroupWindow:Update(  )
 	if(maxRows < 1) then
 		maxRows = 1
 	end
-	
-	self.minColumnCount = math.ceil(#self.group.slots / maxRows) 
+
+	self.minColumnCount = math.ceil(#self.group.slots / maxRows)
 	self.maxColumnCount = math.floor((availWidth + BACKPACK.settings.ui.group.padding) / (BACKPACK.settings.ui.iconSize + BACKPACK.settings.ui.group.padding )) -1
-	
+
 	self:SetColumns(self.group.settings.columns)
 	control:SetScale(BACKPACK.settings.ui.scale);
 	control:SetClampedToScreen(BACKPACK.settings.ui.group.clampToScreen);
 
 	for i=1,control.content:GetNumChildren() do
-		local c = control.content:GetChild(i);
-		if c then
-			c:SetParent(nil)
-			c:SetHidden(true)
-		end
+--		local c = control.content:GetChild(i);
+--		if c then
+--			c:SetParent(nil)
+--			c:SetHidden(true)
+--		end
 	end
 
 	for   _, slot in pairs(group.slots) do
@@ -353,10 +367,19 @@ function BackpackGroupWindow:Update(  )
 	end
 
 
-	
+
 	local width, height = self:DoLayout()
 	self.control:SetDimensions(width, height)
 	self.control:ClearAnchors()
 	self.control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, self.group.settings.left, self.group.settings.top)
-	
+
+end
+
+function BackpackGroupWindow:ShowPopupMenu()
+	ClearMenu()
+	AddMenuItem("Add", function() backpack.ui.group.GROUP_OPTIONS_DIALOG:CreateGroup() end)
+	AddMenuItem("Hide", function()  end)
+	AddMenuItem("Edit", function() BACKPACK:EditGroup(self.group) end)
+	AddMenuItem("Delete", function() BACKPACK:DeleteGroup(self.group.name)  end)
+	ShowMenu(self.window)
 end

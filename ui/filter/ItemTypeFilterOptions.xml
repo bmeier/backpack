@@ -1,0 +1,17 @@
+<GuiXml>
+	<Controls>
+		<Control name="BP_ItemTypeFilterOptions" inherits="BP_FilterOptions" virtual="true">
+			<Controls>
+				<Label name="$(parent)Label" text="Item Type"
+					inherits="BP_FilterOptionsLabel">
+					<Anchor point="TOPLEFT" offsetX="10" offsetY="70" relativePoint="TOPLEFT" relativeTo="$(parent)" />
+				</Label>
+				<Control name="$(parent)DropDown" inherits="ZO_ComboBox">
+					<Dimensions x="300"/>
+					<Anchor point="TOPLEFT" offsetX="10" offsetY="10"
+						relativeTo="$(parent)Label" relativePoint="BOTTOMLEFT" />
+				</Control>
+			</Controls>
+		</Control>
+	</Controls>
+</GuiXml>

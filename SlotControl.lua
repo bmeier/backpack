@@ -312,6 +312,7 @@ function BackpackSlotControl:ShowPopupMenu()
 			PlaySound(SOUNDS.INVENTORY_ITEM_JUNKED)
 		end);
 		AddMenuItem("Report Item", function() ZO_FEEDBACK:OpenBrowserByType(BROWSER_TYPE_USER_ITEM_BUG, item.link) end);
+
 		ShowMenu(self)
 	end
 end

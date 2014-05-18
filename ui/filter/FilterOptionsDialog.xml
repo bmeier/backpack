@@ -1,0 +1,61 @@
+<GuiXml>
+	<Controls>
+		<Control name="BP_FilterOptionsDropDown" virtual="true">
+			<Controls>
+				<Backdrop name="$(parent)TextField" inherits="BP_Textfield">
+					<Anchor point="TOPLEFT" relativeTo="$(parent)"
+						relativePoint="TOPLEFT" />
+					<Dimensions x="300" />
+				</Backdrop>
+				<Button name="$(parent)Button" inherits="ZO_DropdownButton">
+					<Dimensions x="26" y="26" />
+					<Anchor point="LEFT" relativeTo="$(parent)TextField"
+						relativePoint="RIGHT" offsetX="10" />
+				</Button>
+			</Controls>
+		</Control>
+
+		<TopLevelControl name="BP_FilterOptionsDialog"
+			inherits="ZO_CustomDialogBase" virtual="true">
+			<Controls>
+				<Control name="$(parent)DefaultOptions"
+					resizeToFitDescendents="true">
+					<Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
+					<Controls>
+						<Texture color="00000000">
+							<AnchorFill />
+						</Texture>
+						<Label name="$(parent)NameLabel" text="Name"
+							inherits="BP_FilterOptionsLabel">
+							<Anchor point="TOPLEFT" offsetX="10" offsetY="70" />
+						</Label>
+						<Backdrop name="$(parent)Name" inherits="BP_FilterOptionsTextField">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)NameLabel"
+								offsetX="10" offsetY="25" />
+							<Dimensions x="300" />
+						</Backdrop>
+						<Label name="$(parent)TypeLabel" text="Type"
+							inherits="BP_FilterOptionsLabel">
+							<Anchor point="TOPLEFT" offsetX="-10" offsetY="25"
+								relativeTo="$(parent)Name" relativePoint="BOTTOMLEFT" />
+						</Label>
+						<Control name="$(parent)TypeComboBox" inherits="ZO_ComboBox">
+							<Dimensions x="300" />
+							<Anchor point="TOPLEFT" relativeTo="$(parent)TypeLabel"
+								offsetX="10" offsetY="25" />
+						</Control>
+					</Controls>
+				</Control>
+
+				<Control name="$(parent)FilterOptions"
+					resizeToFitDescendents="true">
+					<Anchor point="TOPLEFT" relativeTo="$(parent)DefaultOptions"
+						relativePoint="BOTTOMLEFT" />
+				</Control>
+
+				<Control name="$(parent)Create" inherits="ZO_CustomDialogButton" />
+				<Control name="$(parent)Cancel" inherits="ZO_CustomDialogButton" />
+			</Controls>
+		</TopLevelControl>
+	</Controls>
+</GuiXml>

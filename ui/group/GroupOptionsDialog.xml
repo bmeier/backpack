@@ -1,0 +1,96 @@
+<GuiXml>
+	<Controls>
+		<TopLevelControl name="BP_GroupOptionsDialog"
+			inherits="ZO_CustomDialogBase" virtual="true">
+			<Dimensions width="300" />
+			<Controls>
+				<Control name="$(parent)Content" resizeToFitDescendents="true">
+
+					<Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
+					<Controls>
+						<Label name="$(parent)NameLabel" text="Name"
+							inherits="BP_FilterOptionsLabel">
+							<Anchor point="TOPLEFT" offsetY="70" />
+						</Label>
+						<Backdrop name="$(parent)Name" inherits="BP_FilterOptionsTextField">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)NameLabel"
+								offsetX="10" offsetY="25" />
+							<Dimensions x="300" />
+						</Backdrop>
+						<Label name="$(parent)FilterLabel" text="Filter"
+							inherits="BP_FilterOptionsLabel">
+							<Anchor point="TOPLEFT" offsetX="-10" offsetY="25"
+								relativeTo="$(parent)Name" relativePoint="BOTTOMLEFT" />
+						</Label>
+
+
+
+						<Control name="$(parent)FilterComboBox" inherits="ZO_ComboBox">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)FilterLabel"
+								offsetX="10" offsetY="25" />
+						</Control>
+
+						<Button name="$(parent)AddFilter" inherits="ZO_DefaultTextButton"
+							text="Add" excludeFromResizeToFitExtents="false">
+							<Dimensions x="30" />
+							<Anchor point="LEFT" relativePoint="RIGHT"
+								relativeTo="$(parent)FilterComboBox" offsetX="25" />
+						</Button>
+
+						<Button name="$(parent)EditFilter" inherits="ZO_DefaultTextButton"
+							text="Edit" excludeFromResizeToFitExtents="true">
+							<Dimensions x="30" />
+							<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)AddFilter"
+								offsetX="10" />
+						</Button>
+
+						<Button name="$(parent)CopyFilter" inherits="ZO_DefaultTextButton"
+							text="Copy" excludeFromResizeToFitExtents="true">
+							<Dimensions x="50" />
+							<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)EditFilter"
+								offsetX="10" />
+						</Button>
+
+						<Button name="$(parent)DeleteFilter" inherits="ZO_DefaultTextButton"
+							text="Delete" excludeFromResizeToFitExtents="true">
+							<Dimensions x="50" />
+							<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$(parent)CopyFilter"
+								offsetX="10" />
+						</Button>
+
+						<Label name="$(parent)WeightLabel" text="Weight"
+							inherits="BP_FilterOptionsLabel">
+							<Anchor point="TOPLEFT" offsetX="-10" offsetY="25"
+								relativeTo="$(parent)FilterComboBox" relativePoint="BOTTOMLEFT" />
+						</Label>
+						<Slider name="$(parent)WeightSlider" inherits="ZO_Slider">
+							<Dimensions x="230" y="16" />
+							<Anchor point="LEFT" relativeTo="$(parent)WeightLabel"
+								relativePoint="RIGHT" offsetX="10" />
+							<Limits min="0" max="100" />
+						</Slider>
+						<Label name="$(parent)WeightValue" text="0"
+							inherits="BP_FilterOptionsLabel">
+							<Dimensions width="30" />
+							<Anchor point="LEFT" offsetX="10" relativeTo="$(parent)WeightSlider"
+								relativePoint="RIGHT" />
+						</Label>
+						<Label name="$(parent)HiddenLabel" text="Hidden"
+							inherits="BP_FilterOptionsLabel">
+							<Anchor point="TOPLEFT" offsetX="0" offsetY="25"
+								relativeTo="$(parent)WeightLabel" relativePoint="BOTTOMLEFT" />
+						</Label>
+						<Button name="$(parent)Hidden" inherits="ZO_CheckButton">
+							<Anchor point="LEFT" relativeTo="$(parent)HiddenLabel"
+								relativePoint="RIGHT" offsetX="10" />
+						</Button>
+
+					</Controls>
+				</Control>
+				<Control name="$(parent)Create" inherits="ZO_CustomDialogButton" />
+				<Control name="$(parent)Cancel" inherits="ZO_CustomDialogButton" />
+				<Control name="$(parent)Delete" inherits="ZO_CustomDialogButton" />
+			</Controls>
+		</TopLevelControl>
+	</Controls>
+</GuiXml>
