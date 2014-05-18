@@ -420,7 +420,9 @@ function Backpack:DeleteFilter( name )
 	if self.settings.filter[name] then
 		self.settings.filter[name] = nil
 		for k,v in pairs(self.groups) do
-			self:DeleteGroup(v.name)
+			if(v.filter == name) then
+				self:DeleteGroup(v.name)
+			end
 		end
 	end
 end
