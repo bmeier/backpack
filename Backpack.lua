@@ -233,7 +233,7 @@ function Backpack:LoadGroups()
 			weight = 0,
 			hidden = false,
 		}
-		
+
 		self.settings.filter["Misc"] = {
 			name = "Misc",
 			type = backpack.filter.FILTER_FACTORY.FILTER_TYPES.FilterType,
@@ -289,30 +289,39 @@ function Backpack:UpdateGroups()
 	)
 
 
-
+	local unmatched = {}
 	for _,group in pairs(self.groups) do
-		group:RemoveAll()
-		Log:T("checking "..#tocheck.." slots(s).");
-		assert(group.filter);
-		local filterData = self.settings.filter[group.filter]
+		repeat
+			assert(group.filter);
+			local filterData = self.settings.filter[group.filter]
 
-		local filter = backpack.filter.FILTER_FACTORY:GetFilter(filterData.type)
-		assert(filter, "No filter for group ".. group.name)
-		local unmatched = {};
-		for _, slot in pairs(tocheck) do
-			--Log:T("slot: ", slot.bag.id, ", ", slot.idx, ", ", slot.itemInfo)
-			assert(slot)
-			if ( filter:Matches(slot, filterData.options) ) then
-				--Log:T(group.name, " filter matches!")
-				group:AddSlot(slot)
+
+			group:RemoveAll()
+			unmatched = {}
+
+
+			if filterData then
+				local filter = backpack.filter.FILTER_FACTORY:GetFilter(filterData.type)
+				assert(filter, "No filter for group ".. group.name)
+				
+				for _, slot in pairs(tocheck) do
+					--Log:T("slot: ", slot.bag.id, ", ", slot.idx, ", ", slot.itemInfo)
+					assert(slot)
+					if ( filter:Matches(slot, filterData.options) ) then
+						--Log:T(group.name, " filter matches!")
+						group:AddSlot(slot)
+					else
+						table.insert(unmatched, slot);
+					end
+				end
 			else
-				table.insert(unmatched, slot);
+				Log:E("No filter assigned to group '", group.name, "'")
 			end
-		end
-		group.settings = self.settings.ui.groups[group.name][self.currentBag];
-		group:Update();
-		tocheck = unmatched;
-		Log:D(filterData.name .. " filter matched "..#group.slots.." slots(s).");
+			group.settings = self.settings.ui.groups[group.name][self.currentBag];
+			group:Update();
+			tocheck = unmatched;
+			--Log:D(filterData.name .. " filter matched "..#group.slots.." slots(s).");
+		until true
 	end
 	--	assert(#tocheck == 0)
 end
@@ -419,11 +428,6 @@ end
 function Backpack:DeleteFilter( name )
 	if self.settings.filter[name] then
 		self.settings.filter[name] = nil
-		for k,v in pairs(self.groups) do
-			if(v.filter == name) then
-				self:DeleteGroup(v.name)
-			end
-		end
 	end
 end
 
