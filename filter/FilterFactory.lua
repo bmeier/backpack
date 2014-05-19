@@ -11,6 +11,7 @@ FilterFactory.FILTER_TYPES = {
 	ItemName = 6,
 	ItemQuality = 7,
 	Durability = 8,
+	ItemCount = 9,
 }
 
 function FilterFactory:New()

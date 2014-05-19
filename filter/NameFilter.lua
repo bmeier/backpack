@@ -1,9 +1,9 @@
 local Log = LOG_FACTORY:GetLog("ItemNameFilter") 
 local ff = backpack.filter.FILTER_FACTORY
-local ItemNameFilter = Filter:Subclass()
+local ItemNameFilter = ZO_Object:Subclass()
 
 function ItemNameFilter:New( )
-	local r = Filter.New(self)
+	local r = ZO_Object.New(self)
 	r.description = "Filters items based on their names"
 	r.name = "Item Name"
 	r.type = ff.FILTER_TYPES.ItemName

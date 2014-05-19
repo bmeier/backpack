@@ -5,24 +5,6 @@ local CONTROL_NAME = "BP_GROUP_OPTIONS_DIALOG_TOPLEVEL"
 local MODE_CREATE = "create"
 local MODE_EDIT = "edit"
 
--- this is (the name) of a confirmation dialog that is created with
--- the GROUP_OPTIONS_DIALOG. It's is used when GROUP_OPTIONS_DIALOG needs confirmation
--- for certain user actions.
-local GROUP_OPTIONS_CONFIRM = "BP_GROUP_OPTIONS_CONFIRM"
-
-local function InitializeConfirmationDialog()
-	ZO_Dialogs_RegisterCustomDialog(GROUP_OPTIONS_CONFIRM,
-	{
-		customControl = control,
-		title =
-		{
-			text = "<<1>>",
-		},
-		mainText = { text = "<<1>>" },
-		setup = function(self)  end,
-	})
-end
-
 local function InitializeGroupOptionsDialog( dialog )
 	local control = dialog.control
 	assert(control)
@@ -112,6 +94,8 @@ local function InitializeGroupOptionsDialog( dialog )
 			},
 		}
 	})
+	
+	dialog.cancelButton =  GetControl(control, "Cancel")
 end
 
 
@@ -123,7 +107,10 @@ local function RefreshFilters( dialog )
 	dialog.combobox.entries = {}
 	local selected = nil
 	for k, v in pairs(BACKPACK.settings.filter) do
-		local entry = dialog.combobox:CreateItemEntry(k, function() dialog.filter = k end)
+		local entry = dialog.combobox:CreateItemEntry(k, 
+			function() 
+				dialog.filter = k
+			end)
 		dialog.combobox:AddItem(entry)
 
 		if dialog.filter and dialog.filter == k then
@@ -184,17 +171,20 @@ local function InitializeButtons(dialog)
 	end
 	)
 
+
 	ctrl = GetControl(dialog.content, "CopyFilter")
 	assert(ctrl)
 	ctrl:SetHandler("OnClicked",
 	function(control, button)
 		if button == 1 then
 			if(dialog.filter) then
-				Log:E("Not impemented")
+				Log:W("Not implemented!")
 			end
 		end
 	end
 	)
+	ctrl.tooltipText = "Not implemented"
+
 
 	ctrl = GetControl(dialog.content, "DeleteFilter")
 	assert(ctrl)
@@ -203,6 +193,25 @@ local function InitializeButtons(dialog)
 		if button == 1 then
 			if(dialog.filter) then
 				BACKPACK:DeleteFilter(dialog.filter)
+				for k,v in pairs(BACKPACK.groups) do
+					repeat --wtf lua
+						if dialog.mode == MODE_EDIT and dialog.origName == v.name then
+							break
+						end
+						if(v.filter == dialog.filter) then
+							BACKPACK:DeleteGroup(v.name)
+						end
+					until true
+				end
+				
+				
+				if dialog.mode == MODE_EDIT then
+					local groupFilter = BACKPACK.settings.groups[dialog.origName].filter
+					
+					if groupFilter == dialog.filter then
+						dialog.cancelButton:SetEnabled(false)
+					end
+				end
 				dialog.filter = nil
 				RefreshFilters(dialog)
 			end
@@ -235,7 +244,7 @@ end
 function GroupOptionsDialog:Initialize(...)
 	-- create the dialog control
 	if not initialized then
-		self.filter = nil --
+		self.filter = nil
 
 		local control = CreateControlFromVirtual("BP_GroupOptionsDialog", GuiRoot, "BP_GroupOptionsDialog")
 		self.control = control
@@ -247,7 +256,6 @@ function GroupOptionsDialog:Initialize(...)
 		InitializeButtons(self)
 		--		IntializeCheckbox(self)
 		InitializeWeight(self)
-		InitializeConfirmationDialog()
 		InitializeGroupOptionsDialog( self )
 		initialized = true
 	end
@@ -260,14 +268,6 @@ function GroupOptionsDialog:SetWeight( weight )
 	self.weight = weight
 	self.weightLabel:SetText(weight)
 	self.slider:SetValue(weight)
-end
-
-function GroupOptionsDialog:EditGroup(group, cb)
-	self.title = "Edit Group"
-	self.origName = group.name
-	self.mode = MODE_EDIT
-	self:SetGroup(group)
-	self:Show(cb)
 end
 
 function GroupOptionsDialog:SetFilter( name )
@@ -291,6 +291,16 @@ function GroupOptionsDialog:SetGroup(group)
 	RefreshFilters(self)
 end
 
+
+function GroupOptionsDialog:EditGroup(group, cb)
+	self.title = "Edit Group"
+	self.origName = group.name
+	self.mode = MODE_EDIT
+	self:SetGroup(group)
+	self:Show(cb)
+end
+
+
 function GroupOptionsDialog:CreateGroup(cb)
 	self.title = "Create Group"
 	self.mode = MODE_CREATE
@@ -310,7 +320,7 @@ function GroupOptionsDialog:Show(cb)
 	local dialog = ZO_Dialogs_ShowDialog(DIALOG_NAME, {}, {titleParams={self.title}})
 	local delete = GetControl(dialog, "")
 	if (self.mode == MODE_EDIT) then
-	 	self.deleteButton:SetHidden(false)
+		self.deleteButton:SetHidden(false)
 	else
 		self.deleteButton:SetHidden(true)
 	end

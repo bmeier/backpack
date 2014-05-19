@@ -3,7 +3,7 @@
 		<Backdrop name="BP_TextField" inherits="ZO_EditBackdrop" virtual="true">
 			<Dimensions x="300" />
 			<Controls>
-				<EditBox name="$(parent)Edit" inherits="ZO_DefaultEditForBackdrop"
+				<EditBox name="$(parent)Edit" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText"
 					font="ZoFontWinT1" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL"
 					maxInputCharacters="50" />
 			</Controls>

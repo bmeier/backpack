@@ -19,6 +19,7 @@ filter/NameFilter.lua
 filter/ItemTypeFilter.lua
 filter/QualityFilter.lua
 filter/ItemFilterTypeFilter.lua
+filter/ItemCountFilter.lua
 
 ui/package.lua
 ui/Label.xml
@@ -39,6 +40,8 @@ ui/filter/ItemTypeFilterOptions.xml
 ui/filter/ItemTypeFilterOptions.lua
 ui/filter/FilterTypeFilterOptions.xml
 ui/filter/FilterTypeFilterOptions.lua
+ui/filter/ItemCountFilterOptions.xml
+ui/filter/ItemCountFilterOptions.lua
 ui/filter/FilterOptionsDialog.xml
 ui/filter/FilterOptionsDialog.lua
 ui/scene/package.lua

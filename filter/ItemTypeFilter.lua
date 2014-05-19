@@ -1,5 +1,5 @@
 local ff = backpack.filter.FILTER_FACTORY
-local ItemTypeFilter = Filter:Subclass()
+local ItemTypeFilter = ZO_Object:Subclass()
 
 function ItemTypeFilter:New( )
 	local r = ZO_Object.New(self)

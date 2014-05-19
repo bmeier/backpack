@@ -116,14 +116,16 @@ local function IntializeFilterTypes( dialog )
 			data.description = filter.description
 			data.type = type
 			data.options = optionsControl
-
-			local entry = comboBox:CreateItemEntry(data.name, function() dialog:OnFilterTypeChanged(data) end)
+			dialog.types[data.type] = data
+			
+			local entry = comboBox:CreateItemEntry(data.name, function() dialog:SetFilterType(type) end)
 			comboBox:AddItem(entry)
 			comboBox.entries[data.type] = entry
-			dialog.types[data.type] = data
+			
 		end
 	end
 	dialog.combobox = comboBox
+	comboBox:SelectItem(comboBox.entries[backpack.filter.FILTER_FACTORY.FILTER_TYPES.FilterType])
 end
 
 local initialized = false
@@ -136,10 +138,13 @@ function FilterOptionsDialog:New( )
 	return panel
 end
 
-function FilterOptionsDialog:OnFilterTypeChanged( data )
+function FilterOptionsDialog:OnFilterTypeChanged( type )
+end
+
+function FilterOptionsDialog:SetFilterType( type )
 	Log:T("Filter type changed")
 
-	self.type = data.type
+	self.type = type
 
 	local optionsContainer = GetControl(self.control, "FilterOptions")
 	assert(optionsContainer)
@@ -149,14 +154,21 @@ function FilterOptionsDialog:OnFilterTypeChanged( data )
 		self.options.control:SetParent(nil)
 		self.options.control:SetHidden(true)
 	end
-
+	
+	-- table self.types created in IntitializeFilterTypes
+	local data = self.types[type]
+	
 	assert(data.options)
 	data.options.control:ClearAnchors()
 	data.options.control:SetAnchor(TOPLEFT, optionsContainer, TOPLEFT)
 	data.options.control:SetParent(optionsContainer)
 	data.options.control:SetHidden(false)
+	
+	-- this is redundant information
 	self.options = data.options
 end
+
+
 
 
 function FilterOptionsDialog:Initialize(  )
@@ -202,15 +214,6 @@ end
 
 function FilterOptionsDialog:SetFilterName( name )
 	self.name:SetText(name)
-end
-
-function FilterOptionsDialog:SetFilterType( type )
-	local entry = self.combobox.entries[type]
-	if entry then
-		self.combobox:SelectItem(entry)
-	end
-
-
 end
 
 function FilterOptionsDialog:GetFilterName()
