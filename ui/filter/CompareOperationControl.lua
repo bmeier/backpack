@@ -1,12 +1,12 @@
-local CompareOperation = ZO_Object:Subclass()
+local CompareOperationControl = ZO_Object:Subclass()
 
-function CompareOperation:New(...)
+function CompareOperationControl:New(...)
 	local obj = ZO_Object.New(self)
 	obj:Initialize(...)
 	return obj
 end
 
-function CompareOperation:Initialize(control)
+function CompareOperationControl:Initialize(control)
 	assert(control)
 	
 	local comboboxCtrl = GetControl(control, "DropDown")
@@ -15,8 +15,8 @@ function CompareOperation:Initialize(control)
 	local combobox = ZO_ComboBox:New(comboboxCtrl)
 	local entries = {}
 	for k,v in pairs(backpack.filter.CompareOperation) do
-		local entry = combobox:CreateItemEntry(v, function() self.compare = k end)
-		entries[k] = entry
+		local entry = combobox:CreateItemEntry(k, function() self.compare = v end)
+		entries[v] = entry
 		combobox:AddItem(entry)
 	end
 		
@@ -24,19 +24,21 @@ function CompareOperation:Initialize(control)
 	self.entries = entries
 	
 	self.control = control	
-	self.compare = backpack.filter.CompareOperation.Equals
+	self.compare = backpack.filter.CompareOperation.EQUAL
+	assert(self.entries[self.compare])
 	self.combobox:SelectItem(self.entries[self.compare])
 end
 
-function CompareOperation:SetCompareOperation( operation )
+function CompareOperationControl:SetCompareOperation( operation )
 	local entry = self.entries[operation]
+	assert(entry)
 	if entry then
 		self.combobox:SelectItem(entry)
 	end
 end
 
-function CompareOperation:GetOperation()
+function CompareOperationControl:GetOperation()
 	return self.compare
 end
 
-backpack.ui.filter.CompareOperationControl = CompareOperation
+backpack.ui.filter.CompareOperationControl = CompareOperationControl

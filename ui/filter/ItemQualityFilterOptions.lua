@@ -13,8 +13,10 @@ function ItemQualityOptions:Initialize( )
 	local combobox = ZO_ComboBox:New(GetControl(control, "DropDown"))
 
 	self.entries = {}
-	for i, quality in pairs(backpack.Item.Quality) do
-		local entry = combobox:CreateItemEntry(i, function() self.quality = quality end)
+	--table.sort(backpack.Item.Quality, function(a, b) return  a < b end)
+	for quality, name in pairs(backpack.Item.Quality) do
+		local color = GetItemQualityColor(quality);
+		local entry = combobox:CreateItemEntry("|c"..color:ToHex()..name.."|r", function() self.quality = quality end)
 		combobox:AddItem(entry)
 		self.entries[quality] = entry
 	end
