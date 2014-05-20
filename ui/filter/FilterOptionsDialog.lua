@@ -192,7 +192,9 @@ end
 function FilterOptionsDialog:SetFilter( filter )
 	local data = BACKPACK.settings.filter[filter]
 	self:SetFilterName(data.name)
-	self:SetFilterType(data.type)
+	
+	self.combobox:SelectItem(self.combobox.entries[data.type])
+	
 	self:SetFilterOptions(data.options)
 end
 
@@ -230,7 +232,9 @@ end
 
 function FilterOptionsDialog:Reset()
 	self:SetFilterName("")
-	self:SetFilterType(backpack.filter.FILTER_FACTORY.FILTER_TYPES.FilterType)
+	
+	self.combobox:SelectItem(self.combobox.entries[backpack.filter.FILTER_FACTORY.FILTER_TYPES.FilterType])
+	
 end
 function FilterOptionsDialog:Show( callback )
 	self.callback = callback
