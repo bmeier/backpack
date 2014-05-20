@@ -184,7 +184,15 @@ local function InitializeButtons(dialog)
 	function(control, button)
 		if button == 1 then
 			if(dialog.filter) then
-				Log:W("Not implemented!")
+				local data = BACKPACK.settings.filter[dialog.filter]
+				local copy = ZO_DeepTableCopy(data)
+				local name = dialog.filter
+				while BACKPACK.settings.filter[name] do
+					name = "Copy of "..name
+				end
+				copy.name = name
+				BACKPACK.settings.filter[copy.name] = copy
+				dialog:SetFilter(copy.name)
 			end
 		end
 	end
