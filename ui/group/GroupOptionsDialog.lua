@@ -99,6 +99,12 @@ local function InitializeGroupOptionsDialog( dialog )
 end
 
 
+local function ResetDialog( dialog )
+	dialog:SetGroupName("")
+	dialog:SetWeight(0)
+	dialog:SetFilter(nil)	
+end
+
 local function RefreshFilters( dialog )
 	local control = dialog.control
 	assert(control)
@@ -307,6 +313,7 @@ function GroupOptionsDialog:CreateGroup(cb)
 	self.weight = 0
 	self.hidden = false
 	self.origName = nil
+	ResetDialog(self)
 	self:Show(cb)
 end
 
