@@ -1,7 +1,7 @@
 ## Title: Backpack
 ## APIVersion: 100003
 ## SavedVariables: Backpack_Settings
-
+## OptionalDependsOn: ResearchAssistant
 
 libs\LibStub.lua
 libs\LibAddonMenu-1.0.lua
@@ -20,6 +20,7 @@ filter/ItemTypeFilter.lua
 filter/QualityFilter.lua
 filter/ItemFilterTypeFilter.lua
 filter/ItemCountFilter.lua
+filter/ItemResearchableFilter.lua
 
 ui/package.lua
 ui/Label.xml
@@ -42,6 +43,8 @@ ui/filter/FilterTypeFilterOptions.xml
 ui/filter/FilterTypeFilterOptions.lua
 ui/filter/ItemCountFilterOptions.xml
 ui/filter/ItemCountFilterOptions.lua
+ui/filter/ItemResearchableFilterOptions.xml
+ui/filter/ItemResearchableFilterOptions.lua
 ui/filter/FilterOptionsDialog.xml
 ui/filter/FilterOptionsDialog.lua
 ui/scene/package.lua

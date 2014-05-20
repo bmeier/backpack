@@ -1,0 +1,19 @@
+<GuiXml>
+	<Controls>
+		<Control name="BP_ItemResearchableFilterOptions" inherits="BP_FilterOptions"
+			virtual="true">
+			<Controls>
+				<Label name="$(parent)Label" text="Invert Filter"
+					inherits="BP_FilterOptionsLabel">
+					<Anchor point="TOPLEFT" offsetX="10" offsetY="70"
+						relativePoint="TOPLEFT" relativeTo="$(parent)" />
+				</Label>
+				<Button name="$(parent)Invert" inherits="ZO_CheckButton">
+					<Anchor point="LEFT" relativeTo="$(parent)Label"
+						relativePoint="RIGHT" offsetX="10" />
+				</Button>
+
+			</Controls>
+		</Control>
+	</Controls>
+</GuiXml>
