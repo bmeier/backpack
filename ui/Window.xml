@@ -1,0 +1,9 @@
+<GuiXml>
+	<Controls>
+		<TopLevelControl name="BackpackWindow" mouseEnabled="true" movable="true" virtual="true">
+			<OnMoveStop>
+				self.controller:OnMoveStop()
+			</OnMoveStop>
+		</TopLevelControl>
+	</Controls>
+</GuiXml>
