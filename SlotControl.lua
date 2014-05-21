@@ -168,7 +168,6 @@ function BackpackSlotControl:Initialize()
 	control.border:SetTexture("Backpack/itemborder.dds");
 	control.border:SetDrawLayer(DL_OVERLAY);
 
-	control:SetHidden(true);
 	self.control = control;
 	self:Update();
 end

@@ -1,52 +1,6 @@
 
 local Log = LOG_FACTORY:GetLog("BackpackGroup")
 
-local BackpackGroupFragment = ZO_FadeSceneFragment:Subclass()
-
-function BackpackGroupFragment:New(group)
-	local fragment =  ZO_FadeSceneFragment.New(self, group.window.control);
-	fragment:Initialize( group )
-	return fragment;
-end
-
-function BackpackGroupFragment:Initialize( group )
-	self.group = group;
-	self.forceHidden =  false
-end
-
-function BackpackGroupFragment:Show()
-	Log:T("Fragment Show()")
-	if not self.forceHidden then
-		ZO_FadeSceneFragment.Show(self)
-	end
-	self:OnShown()
-end
-
-function BackpackGroupFragment:Hide()
-	Log:T("Fragment Hide()")
-	if not self.forceHidden then
-		ZO_FadeSceneFragment.Hide(self)
-	end
-	self:OnHidden()
-end
-
-function BackpackGroupFragment:Update()
-	local hide = #self.group.slots == 0 or (BACKPACK.settings.ui.groups[self.group.name].hidden == true)
-	if hide then
-		if self:IsShowing() then
-			self:Hide()
-		end
-	else
-		-- show the fragment
-		if self.forceHidden == true then -- fragment has been forced to stay hidden
-			ZO_FadeSceneFragment.Show(self)
-			self:OnShown()
-		end
-	end
-
-	self.forceHidden = hide
-end
-
 BackpackGroup = ZO_Object:Subclass();
 BackpackGroup.name = name
 BackpackGroup.filter = filter
@@ -79,7 +33,7 @@ function BackpackGroup:Initialize()
 
 	assert(window)
 	self.window = window
-	self.fragment = BackpackGroupFragment:New(self);
+	self.fragment = backpack.ui.group.Fragment:New(self);
 end
 
 function BackpackGroup:Update()
@@ -118,6 +72,10 @@ function BackpackGroup:AddSlot( slot )
 	assert( slot )
 	table.insert(self.slots, slot)
 	slot.group = self
+	
+	local hidden = not self.fragment:IsShowing()
+	slot.control.control:SetHidden(hidden)
+	
 end
 
 function BackpackGroup:AddToScene( sceneName )
