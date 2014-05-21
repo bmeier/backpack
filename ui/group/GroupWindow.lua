@@ -363,7 +363,9 @@ function BackpackGroupWindow:Update(  )
 
 	for   _, slot in pairs(group.slots) do
 		slot.control.control:SetParent(control.content)
-		slot.control.control:SetHidden(false)
+		if(not slot.control.control:IsHidden()) then
+			slot.control.control:SetHidden(false)
+		end
 	end
 
 
