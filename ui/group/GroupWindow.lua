@@ -374,7 +374,7 @@ function BackpackGroupWindow:Update(  )
 	self.control:SetDimensions(width, height)
 	self.control:ClearAnchors()
 	self.control:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, self.group.settings.left, self.group.settings.top)
-
+	self.control.label:SetText(group.name)
 end
 
 function BackpackGroupWindow:ShowPopupMenu()
