@@ -7,6 +7,7 @@ libs\LibStub.lua
 libs\LibAddonMenu-1.0.lua
 
 package.lua
+Strings.lua
 Log.lua
 Item.lua
 Slot.lua
