@@ -55,7 +55,6 @@ local function InitializeGroupOptionsDialog( dialog )
 
 					if dialog.mode == MODE_EDIT then
 						if  dialog.origName and dialog.origName ~= name then
-							assert(false)
 							BACKPACK.settings.groups[name] = BACKPACK.settings.groups[dialog.origName]
 							BACKPACK.settings.groups[dialog.origName] = nil
 						end
