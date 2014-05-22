@@ -57,6 +57,9 @@ local function InitializeGroupOptionsDialog( dialog )
 						if  dialog.origName and dialog.origName ~= name then
 							BACKPACK.settings.groups[name] = BACKPACK.settings.groups[dialog.origName]
 							BACKPACK.settings.groups[dialog.origName] = nil
+							
+							BACKPACK.settings.ui.groups[name] = BACKPACK.settings.ui.groups[dialog.origName]
+							BACKPACK.settings.ui.groups[dialog.origName] = nil
 						end
 						local settings = BACKPACK.settings.groups[name]
 						settings.name = name
