@@ -17,7 +17,7 @@ function BackpackGroup:New( name, filter )
 	group.name = name
 	group.slots = {}
 	group.bag = nil
-	group.data = BACKPACK.settings.groups[name] 
+	group.data = BACKPACK.settings.groups[name]
 	group:Initialize();
 	return group;
 end
@@ -37,6 +37,9 @@ function BackpackGroup:Initialize()
 end
 
 function BackpackGroup:Update()
+	Log:D("Updating group ", self.name)
+	local settings = BACKPACK.settings.ui.groups[self.name]
+	self.settings = settings[BACKPACK.currentBag]
 	self.window:Update()
 	self.fragment:Update()
 end
@@ -51,8 +54,6 @@ function BackpackGroup:RemoveSlot( slot )
 
 	if idx then
 		self.slots[idx].group = nil
---		self.slots[idx].control.control:SetParent(nil)
---		self.slots[idx].control.control:SetHidden(true)
 		table.remove(self.slots, idx)
 	end
 end
@@ -62,8 +63,6 @@ function BackpackGroup:RemoveAll()
 
 	for i,s in pairs(self.slots) do
 		s.group = nil
---		s.control.control:SetParent(nil)
---		s.control.control:SetHidden(true)
 	end
 	self.slots = {}
 end
@@ -72,10 +71,9 @@ function BackpackGroup:AddSlot( slot )
 	assert( slot )
 	table.insert(self.slots, slot)
 	slot.group = self
-	
+
 	local hidden = not self.fragment:IsShowing()
 	slot.control.control:SetHidden(hidden)
-	
 end
 
 function BackpackGroup:AddToScene( sceneName )
@@ -84,7 +82,7 @@ function BackpackGroup:AddToScene( sceneName )
 		if not scene.fragments[self.fragment] then
 			scene:AddFragment(self.fragment)
 		end
-	end 
+	end
 end
 
 function BackpackGroup:RemoveFromScene ( sceneName )
