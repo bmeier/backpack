@@ -8,8 +8,12 @@ libs\LibAddonMenu-1.0.lua
 
 package.lua
 Log.lua
-Window.lua
 Item.lua
+Slot.lua
+Group.lua
+Bag.lua 
+Backpack.lua
+Settings.lua
 
 filter/package.lua
 filter/Filter.lua
@@ -25,8 +29,6 @@ filter/ItemResearchableFilter.lua
 ui/package.lua
 ui/Label.xml
 ui/Textfield.xml
-ui/Dropdown.xml
-ui/Dropdown.lua
 ui/Window.xml
 ui/Window.lua
 
@@ -51,6 +53,9 @@ ui/filter/ItemResearchableFilterOptions.lua
 ui/filter/FilterOptionsDialog.xml
 ui/filter/FilterOptionsDialog.lua
 
+ui/slot/package.lua
+ui/slot/SlotControl.lua
+
 ui/group/package.lua
 ui/group/Window.xml
 ui/group/Window.lua
@@ -63,13 +68,5 @@ ui/scene/package.lua
 ui/scene/Fragment.lua
 ui/scene/Scene.lua
 
-Bag.lua
-Searchbox.lua
-SlotControl.lua
-Slot.lua
-
-Group.lua
-Backpack.lua
-Settings.lua
 Handler.lua
 bindings.xml
