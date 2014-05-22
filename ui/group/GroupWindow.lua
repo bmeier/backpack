@@ -361,10 +361,13 @@ function BackpackGroupWindow:Update(  )
 --		end
 	end
 
+	local fragmentVisbile = group.fragment:IsShowing()
 	for   _, slot in pairs(group.slots) do
 		slot.control.control:SetParent(control.content)
-		if(not slot.control.control:IsHidden()) then
+		if(fragmentVisbile) then
 			slot.control.control:SetHidden(false)
+		else
+			slot.control.control:SetHidden(true)
 		end
 	end
 
