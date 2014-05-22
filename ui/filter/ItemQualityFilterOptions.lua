@@ -12,9 +12,11 @@ function ItemQualityOptions:Initialize( )
 	local control = CreateControlFromVirtual("BP_ITEM_QUALITY_FILTER_OPTIONS", GuiRoot, "BP_ItemQualityFilterOptions")
 	local combobox = ZO_ComboBox:New(GetControl(control, "DropDown"))
 
+
+
 	self.entries = {}
-	--table.sort(backpack.Item.Quality, function(a, b) return  a < b end)
-	for quality, name in pairs(backpack.Item.Quality) do
+	combobox:SetSortOrder(ZO_SORT_ORDER_DOWN, ZO_SORT_BY_NAME_NUMERIC)
+	for name, quality in pairs(backpack.Item.Quality) do
 		local color = GetItemQualityColor(quality);
 		local entry = combobox:CreateItemEntry("|c"..color:ToHex()..name.."|r", function() self.quality = quality end)
 		combobox:AddItem(entry)
