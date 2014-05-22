@@ -34,7 +34,7 @@
 								offsetX="10" offsetY="25" />
 							<Dimensions x="300" />
 						</Backdrop>
-						<Label name="$(parent)TypeLabel" text="Type"
+						<Label name="$(parent)TypeLabel" text="Filter By"
 							inherits="BP_FilterOptionsLabel">
 							<Anchor point="TOPLEFT" offsetX="-10" offsetY="25"
 								relativeTo="$(parent)Name" relativePoint="BOTTOMLEFT" />
