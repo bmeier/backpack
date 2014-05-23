@@ -6,7 +6,7 @@ archive = $(name)-$(version).zip
 all: $(archive)
 
 $(archive): 
-	git archive --format zip --output $(archive) master
+	git archive --format zip --output $(archive) --prefix=Backpack/ master
 	
 .PHONY: clean
 clean:
