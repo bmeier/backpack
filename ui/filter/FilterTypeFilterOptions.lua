@@ -15,8 +15,8 @@ function FilterTypeFilterOptions:Initialize( )
 
 	local entries = {}	
 	local combobox = ZO_ComboBox:New(GetControl(control, "DropDown"))
-	for i, type in pairs(backpack.Item.FilterType) do
-		local entry = combobox:CreateItemEntry(i, function() self.filterType = type end)
+	for name, type in pairs(backpack.Item.FilterType) do
+		local entry = combobox:CreateItemEntry(name, function() self.filterType = type end)
 		entries[type] = entry
 		combobox:AddItem(entry)
 	end

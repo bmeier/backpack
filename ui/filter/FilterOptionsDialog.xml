@@ -25,7 +25,7 @@
 						<Texture color="00000000">
 							<AnchorFill />
 						</Texture>
-						<Label name="$(parent)NameLabel" text="Name"
+						<Label name="$(parent)NameLabel" text="BP_NAME"
 							inherits="BP_FilterOptionsLabel">
 							<Anchor point="TOPLEFT" offsetX="10" offsetY="70" />
 						</Label>
@@ -34,7 +34,7 @@
 								offsetX="10" offsetY="25" />
 							<Dimensions x="300" />
 						</Backdrop>
-						<Label name="$(parent)TypeLabel" text="Filter By"
+						<Label name="$(parent)TypeLabel" text="BP_FILTER_BY"
 							inherits="BP_FilterOptionsLabel">
 							<Anchor point="TOPLEFT" offsetX="-10" offsetY="25"
 								relativeTo="$(parent)Name" relativePoint="BOTTOMLEFT" />
