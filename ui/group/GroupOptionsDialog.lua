@@ -43,6 +43,14 @@ local function InitializeGroupOptionsDialog( dialog )
 						Log:W("Invalid group name")
 						return
 					end
+					
+					local weight = dialog.weightTextField:GetText()
+					if not weight or not tonumber(weight) then
+						ZO_Alert(nil, nil, "Invalid weight")
+						Log:W("Invalid weight")
+						return
+					end
+					
 					if dialog.mode == MODE_CREATE and BACKPACK.settings.groups[name] then
 						ZO_Alert(nil, nil, "Group already exists")
 						Log:W("Group already exists.")
@@ -238,14 +246,7 @@ local function InitializeButtons(dialog)
 end
 
 local function InitializeWeight(dialog)
-	local slider = GetControl(dialog.content, "WeightSlider")
-	assert(slider)
-	slider:SetMinMax(0, 100)
-	slider:SetValueStep(1)
-	slider:SetHandler("OnValueChanged", function(control) dialog:SetWeight(dialog.slider:GetValue()) end)
-
-	dialog.slider = slider
-	dialog.weightLabel = GetControl(dialog.content, "WeightValue")
+	 dialog.weightTextField = backpack.ui.TextField:New(GetControl(GetControl(dialog.control, "Content"), "Weight"))
 end
 
 local initialized = false
@@ -282,8 +283,7 @@ function GroupOptionsDialog:SetWeight( weight )
 	weight = zo_max(weight, 0)
 
 	self.weight = weight
-	self.weightLabel:SetText(weight)
-	self.slider:SetValue(weight)
+	self.weightTextField:SetText(weight)
 end
 
 function GroupOptionsDialog:SetFilter( name )

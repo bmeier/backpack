@@ -63,22 +63,14 @@
 							<Anchor point="TOPLEFT" offsetX="-10" offsetY="25"
 								relativeTo="$(parent)FilterComboBox" relativePoint="BOTTOMLEFT" />
 						</Label>
-						<Slider name="$(parent)WeightSlider" inherits="ZO_Slider">
-							<Dimensions x="230" y="16" />
-							<Anchor point="LEFT" relativeTo="$(parent)WeightLabel"
-								relativePoint="RIGHT" offsetX="10" />
-							<Limits min="0" max="100" />
-						</Slider>
-						<Label name="$(parent)WeightValue" text="0"
-							inherits="BP_FilterOptionsLabel">
-							<Dimensions width="30" />
-							<Anchor point="LEFT" offsetX="10" relativeTo="$(parent)WeightSlider"
-								relativePoint="RIGHT" />
-						</Label>
+						<Backdrop name="$(parent)Weight" inherits="BP_TextField">
+							<Anchor point="TOPLEFT" relativeTo="$(parent)WeightLabel"
+								relativePoint="BOTTOMLEFT" offsetX="10" />
+						</Backdrop>
 						<Label name="$(parent)HiddenLabel" text="Hidden"
 							inherits="BP_FilterOptionsLabel">
-							<Anchor point="TOPLEFT" offsetX="0" offsetY="25"
-								relativeTo="$(parent)WeightLabel" relativePoint="BOTTOMLEFT" />
+							<Anchor point="TOPLEFT" offsetX="-10" offsetY="25"
+								relativeTo="$(parent)Weight" relativePoint="BOTTOMLEFT" />
 						</Label>
 						<Button name="$(parent)Hidden" inherits="ZO_CheckButton">
 							<Anchor point="LEFT" relativeTo="$(parent)HiddenLabel"
