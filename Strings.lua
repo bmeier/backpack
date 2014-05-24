@@ -1,16 +1,21 @@
-local str = {}
-
-str["ITEM_QUALITY_TRASH"] = "Trash"
-str["ITEM_QUALITY_NORMAL"] = "Normal"
-str["ITEM_QUALITY_MAGIC"] = "Magic"
-str["ITEM_QUALITY_ARCANE"] = "Arcane"
-str["ITEM_QUALITY_ARTIFACT"] = "Artifact"
-str["ITEM_QUALITY_LEGENDARY"] = "Legendary"
-
+ZO_CreateStringId("BP_NAME", "Name")
 
 --filter options
-str["FILTER_OPTIONS_FILTER_BY"] = "Filter By"
-str["FILTER_OPTIONS_FILTER_NAME"] = "Filter Name"
+ZO_CreateStringId("BP_FILTER_BY", "Filter By")
 
+--researchable items filter options
+ZO_CreateStringId("BP_RESEARCHABLE_ITEM_FILTER_OPTIONS_HINT", "Note: You need to have Research Assitant installed to make the filter work")
 
-backpack.STRINGS = str
+--armor types
+ZO_CreateStringId("BP_ARMOR_TYPE", "Armor Type")
+ZO_CreateStringId("BP_ARMORTYPE_LIGHT", "Light Armor")
+ZO_CreateStringId("BP_ARMORTYPE_MEDIUM", "Medium Armor")
+ZO_CreateStringId("BP_ARMORTYPE_HEAVY", "Heavy Armor")
+
+--item qualitites
+ZO_CreateStringId("ITEM_QUALITY_TRASH", "Trash")
+ZO_CreateStringId("ITEM_QUALITY_NORMAL", "Normal")
+ZO_CreateStringId("ITEM_QUALITY_MAGIC", "Magic")
+ZO_CreateStringId("ITEM_QUALITY_ARCANE", "Arcane")
+ZO_CreateStringId("ITEM_QUALITY_ARTIFACT", "Artifact")
+ZO_CreateStringId("ITEM_QUALITY_LEGENDARY", "Legendary")

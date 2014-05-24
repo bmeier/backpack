@@ -12,7 +12,9 @@ FilterFactory.FILTER_TYPES = {
 	ItemQuality = 7,
 	Durability = 8,
 	ItemCount = 9,
-	ItemResearchable = 10
+	ItemResearchable = 10, 
+	WeaponType = 11,
+	ArmorType = 12
 }
 
 function FilterFactory:New()

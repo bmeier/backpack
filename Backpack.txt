@@ -26,6 +26,8 @@ filter/QualityFilter.lua
 filter/ItemFilterTypeFilter.lua
 filter/ItemCountFilter.lua
 filter/ItemResearchableFilter.lua
+filter/WeaponTypeFilter.lua
+filter/ArmorTypeFilter.lua
 
 ui/package.lua
 ui/Label.xml
@@ -51,6 +53,10 @@ ui/filter/ItemCountFilterOptions.xml
 ui/filter/ItemCountFilterOptions.lua
 ui/filter/ItemResearchableFilterOptions.xml
 ui/filter/ItemResearchableFilterOptions.lua
+ui/filter/WeaponTypeFilterOptions.xml
+ui/filter/WeaponTypeFilterOptions.lua
+ui/filter/ArmorTypeFilterOptions.xml
+ui/filter/ArmorTypeFilterOptions.lua
 ui/filter/FilterOptionsDialog.xml
 ui/filter/FilterOptionsDialog.lua
 
