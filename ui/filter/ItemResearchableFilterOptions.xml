@@ -3,10 +3,17 @@
 		<Control name="BP_ItemResearchableFilterOptions" inherits="BP_FilterOptions"
 			virtual="true">
 			<Controls>
-				<Label name="$(parent)Label" text="Invert Filter"
-					inherits="BP_FilterOptionsLabel">
+				<Label name="$(parent)Hint" text="BP_RESEARCHABLE_ITEM_FILTER_OPTIONS_HINT"
+					font="ZoFontWinT1"
+					color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED"
+					wrapMode="TEX_MODE_WRAP">
 					<Anchor point="TOPLEFT" offsetX="10" offsetY="70"
 						relativePoint="TOPLEFT" relativeTo="$(parent)" />
+					<DimensionConstraints maxX="300" />
+				</Label>
+				<Label name="$(parent)Label" text="Invert Filter" inherits="BP_FilterOptionsLabel">
+					<Anchor point="TOPLEFT" offsetX="-10" offsetY="25"
+						relativePoint="BOTTOMLEFT" relativeTo="$(parent)Hint" />
 				</Label>
 				<Button name="$(parent)Invert" inherits="ZO_CheckButton">
 					<Anchor point="LEFT" relativeTo="$(parent)Label"
