@@ -1,5 +1,5 @@
 ## Title: Backpack
-## APIVersion: 100003
+## APIVersion: 100004
 ## SavedVariables: Backpack_Settings
 ## OptionalDependsOn: ResearchAssistant
 
