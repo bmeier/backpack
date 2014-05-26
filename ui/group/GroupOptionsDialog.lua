@@ -50,6 +50,7 @@ local function InitializeGroupOptionsDialog( dialog )
 						Log:W("Invalid weight")
 						return
 					end
+					weight = tonumber(weight)
 					
 					if dialog.mode == MODE_CREATE and BACKPACK.settings.groups[name] then
 						ZO_Alert(nil, nil, "Group already exists")
@@ -72,7 +73,7 @@ local function InitializeGroupOptionsDialog( dialog )
 						local settings = BACKPACK.settings.groups[name]
 						settings.name = name
 						settings.filter = dialog.filter
-						settings.weight = dialog.weight
+						settings.weight = weight
 						settings.hidden = false
 
 						local group = BACKPACK:GetGroup(dialog.origName)
@@ -108,6 +109,9 @@ local function InitializeGroupOptionsDialog( dialog )
 	dialog.cancelButton =  GetControl(control, "Cancel")
 end
 
+local function Commit( dialog )
+
+end
 
 local function ResetDialog( dialog )
 	dialog:SetGroupName("")
@@ -338,12 +342,15 @@ function GroupOptionsDialog:Show(cb)
 	local delete = GetControl(dialog, "")
 	if (self.mode == MODE_EDIT) then
 		self.deleteButton:SetHidden(false)
+		self.deleteButton:SetEnabled(true)
 	else
 		self.deleteButton:SetHidden(true)
+		self.deleteButton:SetEnabled(false)
 	end
 end
 
 function GroupOptionsDialog:Hide()
 	ZO_Dialogs_ReleaseDialog(DIALOG_NAME, true)
 end
+
 backpack.ui.group.GROUP_OPTIONS_DIALOG=GroupOptionsDialog:New()
