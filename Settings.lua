@@ -15,7 +15,6 @@ local BACKPACK_DEFAULT_SETTINGS = {
 		iconSize = 64,
 		scale = 0.75,
 		group = {
-			font = "ZoFontWinH1",
 			minColumnCount = 3,
 			maxColumnCount = 10,
 			clampToScreen = true,

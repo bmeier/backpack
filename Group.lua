@@ -27,7 +27,7 @@ function BackpackGroup:Initialize()
 	local settings = BACKPACK.settings.ui.groups[self.name]
 	self.settings = settings[BACKPACK.currentBag]
 
-	local window = BackpackGroupWindow:New( self )
+	local window = backpack.ui.group.GroupWindow:New( self )
 
 
 

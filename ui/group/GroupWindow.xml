@@ -1,0 +1,58 @@
+<GuiXml>
+	<Controls>
+		<Control name="GroupWindowTitleBarTemplate" virtual="true">
+			<Controls>
+				<Label name="$(parent)TitelLabel">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" />
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"
+						relativeTo="$(parent)" />
+				</Label>
+			</Controls>
+		</Control>
+
+		<TopLevelControl name="GroupWindow" mouseEnabled="true"
+			movable="true" resizeHandleSize="4" inherits="BackpackWindow"
+			virtual="true">
+			<OnResizeStart>
+				self.manager:OnResizeStart()
+			</OnResizeStart>
+			<OnResizeStop>
+				self.manager:OnResizeStop()
+			</OnResizeStop>
+			<OnMouseUp>
+				self.manager:OnMouseUp(self, button)
+			</OnMouseUp>
+			<OnMouseEnter>self.manager:OnMouseEnter(self)</OnMouseEnter>
+			<OnMouseExit>self.manager:OnMouseExit(self)</OnMouseExit>
+			<OnMoveStop>
+				self.manager:OnMoveStop(self)
+			</OnMoveStop>
+
+			<Controls>
+				<Backdrop name="$(parent)Backdrop" inherits="ZO_DefaultBackdrop">
+					<Anchor point="TOPLEFT" offsetX="-10" offsetY="-10" />
+					)
+					<Anchor point="BOTTOMRIGHT" offsetX="10" offsetY="10" />
+				</Backdrop>
+				<Label name="$(parent)Label" font="ZoFontWinH2"
+					color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED"
+					modifyTextType="UPPERCASE" horizontalAlignment="LEFT" wrapMode="ELLIPSIS">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" />
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT"
+						relativeTo="$(parent)" />
+				</Label>
+				<Texture name="$(parent)Divider" textureFile="EsoUI\Art\Login\login_divider.dds">
+					<Dimensions y="4" />
+					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT"
+						relativeTo="$(parent)Label" offsetX="0" />
+					<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"
+						relativeTo="$(parent)Label" offsetY="0" />
+				</Texture>
+				<Control name="$(parent)ContentPanel">
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Divider"
+						relativePoint="BOTTOMLEFT" offsetY="10" />
+				</Control>
+			</Controls>
+		</TopLevelControl>
+	</Controls>
+</GuiXml>

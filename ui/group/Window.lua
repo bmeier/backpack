@@ -53,7 +53,7 @@ function Window:SetTitle( title )
 end
 
 --backpack.ui.group.Window = Window
---local control = CreateControlFromVirtual("GWTestWindow", GuiRoot, "BackpackGroupWindow")
+--local control = CreateControlFromVirtual("GWTestWindow", GuiRoot, "GroupWindow")
 --control:SetDimensions(300, 200)
 --local bg = CreateControl("GWTestTexture", control, CT_TEXTURE)
 --bg:SetColor(1, 1, 0, 1)
