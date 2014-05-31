@@ -1,10 +1,10 @@
 ## Title: Backpack
 ## APIVersion: 100004
 ## SavedVariables: Backpack_Settings
-## OptionalDependsOn: ResearchAssistant
 
 libs\LibStub.lua
 libs\LibAddonMenu-1.0.lua
+libs\libResearch.lua
 
 package.lua
 Strings.lua

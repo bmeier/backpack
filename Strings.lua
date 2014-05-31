@@ -3,8 +3,6 @@ ZO_CreateStringId("BP_NAME", "Name")
 --filter options
 ZO_CreateStringId("BP_FILTER_BY", "Filter By")
 
---researchable items filter options
-ZO_CreateStringId("BP_RESEARCHABLE_ITEM_FILTER_OPTIONS_HINT", "Note: You need to have Research Assitant installed to make the filter work")
 
 --armor types
 ZO_CreateStringId("BP_ARMOR_TYPE", "Armor Type")

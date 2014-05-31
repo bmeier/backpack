@@ -1,6 +1,7 @@
 local Log = LOG_FACTORY:GetLog("ItemResearchableFilter")
 local ff = backpack.filter.FILTER_FACTORY
 local ItemResearchableFilter = ZO_Object:Subclass()
+local libResearch = LibStub:GetLibrary("libResearch")
 
 function ItemResearchableFilter:New( )
 	local r = ZO_Object.New(self)
@@ -21,8 +22,8 @@ function ItemResearchableFilter:Matches(slot, options)
 	end
 
 	local isResearchable = false
-	if(ResearchAssistantScanner and ResearchAssistantScanner.isExposed) then
-		isResearchable = ResearchAssistantScanner:IsItemResearchable(slot.bag.id, slot.idx)
+	if(libResearch) then
+		isResearchable = libResearch:IsItemResearchable(slot.bag.id, slot.idx)
 	end
 
 	if options.invert ~= nil and options.invert == true then
