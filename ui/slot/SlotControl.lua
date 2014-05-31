@@ -102,9 +102,13 @@ function BackpackSlotControl:OnMouseExit()
 	end
 	ClearTooltip(ItemTooltip)
 end
-function BackpackSlotControl:OnClicked(control, button)
+function BackpackSlotControl:OnClicked(control, button, ctrl, alt, shift)
 	if(button == 2) then
 		self:ShowPopupMenu();
+	elseif(button == 1 and IsShiftKeyDown()) then
+		if not self.slot:IsEmpty() then
+			ZO_LinkHandler_InsertLink(zo_strformat(SI_TOOLTIP_ITEM_NAME, self.slot.itemInfo.linkBrackets))
+		end
 	end
 end
 
