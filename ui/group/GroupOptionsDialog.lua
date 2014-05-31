@@ -43,7 +43,7 @@ local function InitializeGroupOptionsDialog( dialog )
 						Log:W("Invalid group name")
 						return
 					end
-					
+
 					local weight = dialog.weightTextField:GetText()
 					if not weight or not tonumber(weight) then
 						ZO_Alert(nil, nil, "Invalid weight")
@@ -51,7 +51,7 @@ local function InitializeGroupOptionsDialog( dialog )
 						return
 					end
 					weight = tonumber(weight)
-					
+
 					if dialog.mode == MODE_CREATE and BACKPACK.settings.groups[name] then
 						ZO_Alert(nil, nil, "Group already exists")
 						Log:W("Group already exists.")
@@ -66,7 +66,7 @@ local function InitializeGroupOptionsDialog( dialog )
 						if  dialog.origName and dialog.origName ~= name then
 							BACKPACK.settings.groups[name] = BACKPACK.settings.groups[dialog.origName]
 							BACKPACK.settings.groups[dialog.origName] = nil
-							
+
 							BACKPACK.settings.ui.groups[name] = BACKPACK.settings.ui.groups[dialog.origName]
 							BACKPACK.settings.ui.groups[dialog.origName] = nil
 						end
@@ -74,7 +74,7 @@ local function InitializeGroupOptionsDialog( dialog )
 						settings.name = name
 						settings.filter = dialog.filter
 						settings.weight = weight
-						settings.hidden = false
+						settings.hidden = ZO_CheckButton_IsChecked(dialog.checkbox)
 
 						local group = BACKPACK:GetGroup(dialog.origName)
 						assert(group)
@@ -82,7 +82,7 @@ local function InitializeGroupOptionsDialog( dialog )
 						group.filter = dialog.filter
 
 					else
-						BACKPACK:AddGroup({ name=name, filter=dialog.filter, weight=weight, hidden=false } )
+						BACKPACK:AddGroup({ name=name, filter=dialog.filter, weight=weight, hidden=ZO_CheckButton_IsChecked(dialog.checkbox) } )
 					end
 					BACKPACK:UpdateGroups()
 					dialog:Hide()
@@ -105,7 +105,7 @@ local function InitializeGroupOptionsDialog( dialog )
 			},
 		}
 	})
-	
+
 	dialog.cancelButton =  GetControl(control, "Cancel")
 end
 
@@ -116,7 +116,7 @@ end
 local function ResetDialog( dialog )
 	dialog:SetGroupName("")
 	dialog:SetWeight(0)
-	dialog:SetFilter(nil)	
+	dialog:SetFilter(nil)
 end
 
 local function RefreshFilters( dialog )
@@ -127,10 +127,10 @@ local function RefreshFilters( dialog )
 	dialog.combobox.entries = {}
 	local selected = nil
 	for k, v in pairs(BACKPACK.settings.filter) do
-		local entry = dialog.combobox:CreateItemEntry(k, 
-			function() 
-				dialog.filter = k
-			end)
+		local entry = dialog.combobox:CreateItemEntry(k,
+		function()
+			dialog.filter = k
+		end)
 		dialog.combobox:AddItem(entry)
 
 		if dialog.filter and dialog.filter == k then
@@ -231,11 +231,11 @@ local function InitializeButtons(dialog)
 						end
 					until true
 				end
-				
-				
+
+
 				if dialog.mode == MODE_EDIT then
 					local groupFilter = BACKPACK.settings.groups[dialog.origName].filter
-					
+
 					if groupFilter == dialog.filter then
 						dialog.cancelButton:SetEnabled(false)
 					end
@@ -250,7 +250,7 @@ local function InitializeButtons(dialog)
 end
 
 local function InitializeWeight(dialog)
-	 dialog.weightTextField = backpack.ui.TextField:New(GetControl(GetControl(dialog.control, "Content"), "Weight"))
+	dialog.weightTextField = backpack.ui.TextField:New(GetControl(GetControl(dialog.control, "Content"), "Weight"))
 end
 
 local initialized = false
@@ -273,6 +273,8 @@ function GroupOptionsDialog:Initialize(...)
 
 		self.content = GetControl(control, "Content")
 		self.nameEdit = GetControl(GetControl(self.content, "Name"), "Edit")
+
+		self.checkbox = GetControl(self.content, "Hidden")
 		InitializeCombobox(self)
 		InitializeButtons(self)
 		--		IntializeCheckbox(self)
@@ -304,6 +306,7 @@ function GroupOptionsDialog:SetGroup(group)
 	self.origName = group.name
 	Log:T("SetGroup() group filter: ", group.filter)
 	self.group = group
+	ZO_CheckButton_SetCheckState(self.checkbox, group.hidden)
 	RefreshFilters(self)
 end
 
@@ -334,7 +337,6 @@ function GroupOptionsDialog:Show(cb)
 	self.callback = cb
 	RefreshFilters(self)
 	local dialog = ZO_Dialogs_ShowDialog(DIALOG_NAME, {}, {titleParams={self.title}})
-	local delete = GetControl(dialog, "")
 	if (self.mode == MODE_EDIT) then
 		self.deleteButton:SetHidden(false)
 		self.deleteButton:SetEnabled(true)
