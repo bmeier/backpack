@@ -53,6 +53,10 @@ local BACKPACK_DEFAULT_SETTINGS = {
 	},
 
 	scenes = {
+		backpack = {
+			name="backpack",
+			visible = true
+		},
 		store = {
 			name = "store",
 			visible = true

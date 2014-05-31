@@ -11,9 +11,11 @@ end
 
 local function AddToScenes( fragment )
 	fragment:AddToScene("backpack")
-	for _, data in pairs(BACKPACK.settings.scenes) do
-		Log:D("Adding fragment ", fragment.group.name , " to scene ", data.name)
-		fragment:AddToScene(data.name)
+	for name, data in pairs(BACKPACK.settings.scenes) do
+		if data.visible then
+			Log:D("Adding fragment ", fragment.group.name , " to scene ", name)
+			fragment:AddToScene(name)
+		end
 	end
 end
 
@@ -51,6 +53,10 @@ function Fragment:RemoveFromScene ( sceneName )
 	else
 		Log:E("Failed to remove fragment from scene '", sceneName, "'")
 	end
+end
+
+function Fragment:RemoveFromScenes ( sceneName )
+	RemoveFromScenes(self)
 end
 
 

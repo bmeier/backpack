@@ -83,11 +83,13 @@ function Backpack:UpdateScene( name )
 	if( scene) then
 		if ( settings.visible  ) then
 			for i, group in pairs(self.groups) do
-				group.fragment:AddToScene(name)
+				if not group:IsEmpty() and not group:IsHidden() then
+					group.fragment:AddToScene(settings.name)
+				end
 			end
 		else
 			for i, group in pairs(self.groups) do
-				group.fragment:RemoveFromScene(name)
+				group.fragment:RemoveFromScene(settings.name)
 			end
 
 		end
@@ -361,7 +363,7 @@ function Backpack:DeleteGroup( name )
 		local fragment = group.fragment
 
 		if fragment then
-			fragment:Hide()
+			fragment:RemoveFromScenes()
 
 			-- remove the group fragment from scenes
 			for k,v in pairs(self.settings.scenes) do
@@ -415,14 +417,7 @@ function Backpack:AddGroup( group )
 	self.settings.groups[group.name] = group
 	local group = BackpackGroup:New(group.name, group.filter)
 	table.insert(self.groups, group)
-	BACKPACK_SCENE:AddFragment(group.fragment)
-	for name, settings in pairs(self.settings.scenes) do
-		if settings.visible then
-			local scene = SCENE_MANAGER:GetScene(name)
-			scene:AddFragment(group.fragment)
-		end
-	end
-	self:UpdateGroups()
+	group.fragment:Update()
 end
 
 function Backpack:DeleteFilter( name )
