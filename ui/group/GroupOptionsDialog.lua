@@ -82,7 +82,7 @@ local function InitializeGroupOptionsDialog( dialog )
 						group.filter = dialog.filter
 
 					else
-						BACKPACK:AddGroup({ name=name, filter=dialog.filter, weight=dialog.weight, hidden=false } )
+						BACKPACK:AddGroup({ name=name, filter=dialog.filter, weight=weight, hidden=false } )
 					end
 					BACKPACK:UpdateGroups()
 					dialog:Hide()
@@ -283,10 +283,6 @@ function GroupOptionsDialog:Initialize(...)
 end
 
 function GroupOptionsDialog:SetWeight( weight )
-	weight = zo_min(weight, 100)
-	weight = zo_max(weight, 0)
-
-	self.weight = weight
 	self.weightTextField:SetText(weight)
 end
 
@@ -324,7 +320,6 @@ end
 function GroupOptionsDialog:CreateGroup(cb)
 	self.title = "Create Group"
 	self.mode = MODE_CREATE
-	self.weight = 0
 	self.hidden = false
 	self.origName = nil
 	ResetDialog(self)
