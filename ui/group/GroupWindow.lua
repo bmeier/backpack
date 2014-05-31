@@ -307,10 +307,10 @@ end
 
 function GroupWindow:ShowPopupMenu()
 	ClearMenu()
-	AddMenuItem("Add", function() backpack.ui.group.GROUP_OPTIONS_DIALOG:CreateGroup() end)
-	AddMenuItem("Hide", function()  end)
-	AddMenuItem("Edit", function() BACKPACK:EditGroup(self.group) end)
-	AddMenuItem("Delete", function() BACKPACK:DeleteGroup(self.group.name)  end)
+	AddMenuItem(GetString(BP_ADD), function() backpack.ui.group.GROUP_OPTIONS_DIALOG:CreateGroup() end)
+	AddMenuItem(GetString(BP_HIDE), function()  end)
+	AddMenuItem(GetString(BP_EDIT), function() BACKPACK:EditGroup(self.group) end)
+	AddMenuItem(GetString(BP_DELETE), function() BACKPACK:DeleteGroup(self.group.name)  end)
 	ShowMenu(self.window)
 end
 

@@ -1,4 +1,9 @@
 ZO_CreateStringId("BP_NAME", "Name")
+ZO_CreateStringId("BP_ADD", "Add")
+ZO_CreateStringId("BP_HIDE", "Hide")
+ZO_CreateStringId("BP_EDIT", "Edit")
+ZO_CreateStringId("BP_DELETE", "Delete")
+
 
 --filter options
 ZO_CreateStringId("BP_FILTER_BY", "Filter By")
