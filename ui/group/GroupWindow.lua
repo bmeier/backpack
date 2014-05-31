@@ -121,7 +121,7 @@ end
 
 local nextId = 0
 local GroupWindow = ZO_Object:Subclass()
-
+local CONTENT_PANEL_Y_OFFSET = 10
 function GroupWindow:New( group )
 	local obj = ZO_Object.New(self)
 	obj:Initialize(group)
@@ -232,7 +232,7 @@ function GroupWindow:DoLayout()
 		self.control.label:SetWidth(width)
 		self.control.label:SetHeight(self.control.label:GetFontHeight())
 		local contentHeight = self:GetPrefWidth(rows) --wtf
-		local windowHeight = contentHeight + self.control.content:GetTop() - self.control:GetTop()
+		local windowHeight = contentHeight + self.control.content:GetTop() - self.control:GetTop() + CONTENT_PANEL_Y_OFFSET
 
 		self.control.content:SetDimensions(width, contentHeight)
 
