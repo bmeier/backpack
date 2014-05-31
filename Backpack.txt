@@ -70,7 +70,7 @@ ui/group/Window.lua
 ui/group/GroupOptionsDialog.xml
 ui/group/GroupOptionsDialog.lua
 ui/group/GroupWindow.lua
-ui/group/Fragment.lua
+ui/group/GroupFragment.lua
 
 ui/scene/package.lua
 ui/scene/Fragment.lua

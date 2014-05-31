@@ -33,11 +33,15 @@ function Backpack:OnLoad()
 
 	BACKPACK_SCENE = backpack.ui.scene.Scene:New();
 	for i, group in pairs(self.groups) do
-		BACKPACK_SCENE:AddFragment(group.fragment)
-		for name, settings in pairs(self.settings.scenes) do
-			if settings.visible then
-				local scene = SCENE_MANAGER:GetScene(name)
-				scene:AddFragment(group.fragment)
+		local fragment = group.fragment
+
+		if not group:IsEmpty() and not group:IsHidden() then
+			group.fragment:AddToScene("backpack")
+
+			for name, settings in pairs(self.settings.scenes) do
+				if settings.visible then
+					group.fragment:AddToScene(name)
+				end
 			end
 		end
 	end
@@ -46,7 +50,7 @@ function Backpack:OnLoad()
 		local scene = SCENE_MANAGER:GetScene(name)
 		scene:RegisterCallback("StateChange",
 		function(oldState, newState)
-			if(newState == SCENE_SHOWING) then
+			if(newState == SCENE_SHOWING) and settings.visible == true then
 				self:ShowBag(self.bags[BAG_BACKPACK])
 			end
 		end)
@@ -79,15 +83,11 @@ function Backpack:UpdateScene( name )
 	if( scene) then
 		if ( settings.visible  ) then
 			for i, group in pairs(self.groups) do
-				if(not scene.fragments[group.fragment]) then
-					scene:AddFragment(group.fragment)
-				end
+				group.fragment:AddToScene(name)
 			end
 		else
 			for i, group in pairs(self.groups) do
-				if(scene.fragments[group.fragment]) then
-					scene.fragments[group.fragment] = nil --outch
-				end
+				group.fragment:RemoveFromScene(name)
 			end
 
 		end
@@ -303,7 +303,7 @@ function Backpack:UpdateGroups()
 			if filterData then
 				local filter = backpack.filter.FILTER_FACTORY:GetFilter(filterData.type)
 				assert(filter, "No filter for group ".. group.name)
-				
+
 				for _, slot in pairs(tocheck) do
 					--Log:T("slot: ", slot.bag.id, ", ", slot.idx, ", ", slot.itemInfo)
 					assert(slot)
@@ -320,7 +320,7 @@ function Backpack:UpdateGroups()
 			group.settings = self.settings.ui.groups[group.name][self.currentBag];
 			group:Update();
 			tocheck = unmatched;
-			--Log:D(filterData.name .. " filter matched "..#group.slots.." slots(s).");
+		--Log:D(filterData.name .. " filter matched "..#group.slots.." slots(s).");
 		until true
 	end
 	--	assert(#tocheck == 0)

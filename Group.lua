@@ -33,7 +33,7 @@ function BackpackGroup:Initialize()
 
 	assert(window)
 	self.window = window
-	self.fragment = backpack.ui.group.Fragment:New(self);
+	self.fragment = backpack.ui.group.GroupFragment:New(self);
 end
 
 function BackpackGroup:Update()
@@ -72,7 +72,7 @@ function BackpackGroup:AddSlot( slot )
 	table.insert(self.slots, slot)
 	slot.group = self
 
-	local hidden = not self.fragment:IsShowing()
+	local hidden = not self.fragment.control:IsShowing()
 	slot.control.control:SetHidden(hidden)
 end
 
@@ -91,5 +91,18 @@ function BackpackGroup:RemoveFromScene ( sceneName )
 		-- not a good idea
 		scene.fragments[self.fragment] = nil
 	end
+end
+
+function BackpackGroup:IsEmpty()
+	return #self.slots == 0
+end
+
+function BackpackGroup:IsHidden()
+	return self.data.hidden == true
+end
+
+function BackpackGroup:SetHidden( hidden )
+	self.data.hidden = hidden
+	self.fragment:Update()
 end
 
