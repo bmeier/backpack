@@ -15,7 +15,7 @@ Scene.keybindStripDescriptor =
 		keybind = "UI_SHORTCUT_SECONDARY",
 
 		callback = function()
-			BACKPACK:CreateGroup()
+			backpack.ui.group.GROUP_DIALOG:ShowCreateGroupDialog()
 		end,
 	},
 	{
@@ -26,10 +26,8 @@ Scene.keybindStripDescriptor =
 			ClearMenu()
 			for k, v in pairs(BACKPACK.settings.groups) do
 				AddMenuItem(v.name, function()
-					
 					local group = BACKPACK:GetGroup(v.name)
-					BACKPACK:EditGroup(group)
-	
+					backpack.ui.group.GROUP_DIALOG:ShowEditGroupDialog(group)
 				end
 				)
 			end

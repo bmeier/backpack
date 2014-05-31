@@ -67,8 +67,8 @@ ui/slot/SlotControl.lua
 ui/group/package.lua
 ui/group/GroupWindow.xml
 ui/group/Window.lua
-ui/group/GroupOptionsDialog.xml
-ui/group/GroupOptionsDialog.lua
+ui/group/GroupDialog.xml
+ui/group/GroupDialog.lua
 ui/group/GroupWindow.lua
 ui/group/GroupFragment.lua
 

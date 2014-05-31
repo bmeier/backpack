@@ -351,7 +351,7 @@ function Backpack:CreateFilter( filter )
 end
 
 function Backpack:ShowGroupSettings()
-	backpack.ui.group.GROUP_OPTIONS_DIALOG:Show()
+	backpack.ui.group.GROUP_DIALOG:Show()
 end
 
 function Backpack:DeleteGroup( name )
@@ -395,19 +395,6 @@ function Backpack:GetGroup( name )
 		end
 	end
 end
-
-function Backpack:EditGroup( group )
-	assert(group)
-	if group then
-		local cb = function() self:UpdateGroups() end
-		backpack.ui.group.GROUP_OPTIONS_DIALOG:EditGroup(group.data, cb)
-	end
-end
-
-function Backpack:CreateGroup()
-	backpack.ui.group.GROUP_OPTIONS_DIALOG:CreateGroup()
-end
-
 
 function Backpack:AddGroup( group )
 	assert(group.name)

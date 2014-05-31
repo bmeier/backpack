@@ -1,11 +1,11 @@
-local Log = LOG_FACTORY:GetLog("GroupOptionsDialog")
+local Log = LOG_FACTORY:GetLog("GroupDialog")
 
-local DIALOG_NAME = "BP_GROUP_OPTIONS_DIALOG"
-local CONTROL_NAME = "BP_GROUP_OPTIONS_DIALOG_TOPLEVEL"
+local DIALOG_NAME = "BP_GROUP_DIALOG"
+local CONTROL_NAME = "BP_GROUP_DIALOG_TOPLEVEL"
 local MODE_CREATE = "create"
 local MODE_EDIT = "edit"
 
-local function InitializeGroupOptionsDialog( dialog )
+local function InitializeGroupDialog( dialog )
 	local control = dialog.control
 	assert(control)
 	dialog.deleteButton =  GetControl(control, "Delete")
@@ -254,20 +254,20 @@ local function InitializeWeight(dialog)
 end
 
 local initialized = false
-local GroupOptionsDialog = ZO_Object:Subclass()
-GroupOptionsDialog.name = CONTROL_NAME
-function GroupOptionsDialog:New(...)
+local GroupDialog = ZO_Object:Subclass()
+GroupDialog.name = CONTROL_NAME
+function GroupDialog:New(...)
 	local obj = ZO_Object.New(self)
 	obj:Initialize(...)
 	return obj
 end
 
-function GroupOptionsDialog:Initialize(...)
+function GroupDialog:Initialize(...)
 	-- create the dialog control
 	if not initialized then
 		self.filter = nil
 
-		local control = CreateControlFromVirtual("BP_GroupOptionsDialog", GuiRoot, "BP_GroupOptionsDialog")
+		local control = CreateControlFromVirtual("BackpackGroupDialog", GuiRoot, "BackpackGroupDialog")
 		self.control = control
 		assert(control)
 
@@ -279,27 +279,27 @@ function GroupOptionsDialog:Initialize(...)
 		InitializeButtons(self)
 		--		IntializeCheckbox(self)
 		InitializeWeight(self)
-		InitializeGroupOptionsDialog( self )
+		InitializeGroupDialog( self )
 		initialized = true
 	end
 end
 
-function GroupOptionsDialog:SetWeight( weight )
+function GroupDialog:SetWeight( weight )
 	self.weightTextField:SetText(weight)
 end
 
-function GroupOptionsDialog:SetFilter( name )
+function GroupDialog:SetFilter( name )
 	self.filter = name
 	RefreshFilters(self)
 end
 
-function GroupOptionsDialog:SetGroupName(name)
+function GroupDialog:SetGroupName(name)
 	assert(name)
 	self.name = name
 	self.nameEdit:SetText(name)
 end
 
-function GroupOptionsDialog:SetGroup(group)
+function GroupDialog:SetGroup(group)
 	self.filter = group.filter
 	self:SetGroupName(group.name)
 	self:SetWeight(group.weight)
@@ -311,7 +311,7 @@ function GroupOptionsDialog:SetGroup(group)
 end
 
 
-function GroupOptionsDialog:EditGroup(group, cb)
+function GroupDialog:ShowEditGroupDialog(group, cb)
 	self.title = "Edit Group"
 	self.origName = group.name
 	self.mode = MODE_EDIT
@@ -320,7 +320,7 @@ function GroupOptionsDialog:EditGroup(group, cb)
 end
 
 
-function GroupOptionsDialog:CreateGroup(cb)
+function GroupDialog:ShowCreateGroupDialog(cb)
 	self.title = "Create Group"
 	self.mode = MODE_CREATE
 	self.hidden = false
@@ -329,11 +329,11 @@ function GroupOptionsDialog:CreateGroup(cb)
 	self:Show(cb)
 end
 
-function GroupOptionsDialog:GetGroupName()
+function GroupDialog:GetGroupName()
 	return self.nameEdit:GetText()
 end
 
-function GroupOptionsDialog:Show(cb)
+function GroupDialog:Show(cb)
 	self.callback = cb
 	RefreshFilters(self)
 	local dialog = ZO_Dialogs_ShowDialog(DIALOG_NAME, {}, {titleParams={self.title}})
@@ -346,8 +346,8 @@ function GroupOptionsDialog:Show(cb)
 	end
 end
 
-function GroupOptionsDialog:Hide()
+function GroupDialog:Hide()
 	ZO_Dialogs_ReleaseDialog(DIALOG_NAME, true)
 end
 
-backpack.ui.group.GROUP_OPTIONS_DIALOG=GroupOptionsDialog:New()
+backpack.ui.group.GROUP_DIALOG=GroupDialog:New()
