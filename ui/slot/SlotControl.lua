@@ -113,7 +113,7 @@ function BackpackSlotControl:OnClicked(control, button, ctrl, alt, shift)
 end
 
 function BackpackSlotControl:OnMouseDoubleClick(button)
-
+	
 	if(button == 1 and self.slot.itemInfo) then
 		local bagId = self.slot.bag.id;
 		local idx = self.slot.idx;
@@ -136,15 +136,12 @@ function BackpackSlotControl:OnMouseDoubleClick(button)
 	end
 end
 
+local nextId = 0
 function BackpackSlotControl:Initialize()
-	local name = "BackpackSlotControl_"..self.slot.bag.id.."_"..self.slot.idx;
-	local control = CreateControl(name, GuiRoot, CT_BUTTON);
-	control:SetMouseEnabled(true);
-	control:EnableMouseButton(2, true);
-	control:SetHandler("OnClicked", function(control, button) self:OnClicked(control, button) end)
-	control:SetHandler("OnMouseEnter", function(...)  self:OnMouseEnter(); end)
-	control:SetHandler("OnMouseExit", function(...)  self:OnMouseExit(); end)
-	control:SetHandler("OnMouseDoubleClick", function(control, button) self:OnMouseDoubleClick(button) end)
+	local name = "BackpackSlotControl_"..nextId;
+	nextId = nextId + 1
+	local control = CreateControlFromVirtual(name, GuiRoot, "BackpackSlotTemplate");
+	control.manager = self
 	control:SetHandler("OnDragStart",
 	function()
 		if self.slot.itemInfo then
@@ -153,25 +150,10 @@ function BackpackSlotControl:Initialize()
 	end
 	)
 
-	control.background = CreateControl(name.."Background", control, CT_TEXTURE);
-	control.background:SetAnchorFill(control);
-	control.background:SetColor(0, 0, 0, 1);
-
-	control.itemTexture = CreateControl(name.."Item", control, CT_TEXTURE);
-	control.itemTexture:SetAnchorFill(control);
-	control.itemTexture:SetHidden(true);
-
-	control.label = CreateControl(name.."Label", control, CT_LABEL);
-	control.label:SetAnchor(BOTTOMRIGHT, control, BOTTOMRIGHT, -4, -4)
-	control.label:SetFont("ZoFontGameMedium")
-	--control.label:SetWidth(40);
-	--control.label:SetHeight(20);
-
-	control.border = CreateControl(name.."Border", control, CT_TEXTURE);
-	control.border:SetAnchorFill(control);
-	control.border:SetTexture("Backpack/itemborder.dds");
-	control.border:SetDrawLayer(DL_OVERLAY);
-
+	control.background = GetControl(control, "Background")
+	control.itemTexture = GetControl(control, "Item")
+	control.label = GetControl(control, "Label")
+	control.border = GetControl(control, "Border")
 	self.control = control;
 	self:Update();
 end

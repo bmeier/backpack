@@ -1,0 +1,42 @@
+<GuiXml>
+	<Controls>
+		<Tooltip name="BackpackSlotTooltip" inherits="ZO_ItemIconTooltip">
+		</Tooltip>
+		<Button name="BackpackSlotTemplate" mouseEnabled="true"
+			virtual="true">
+			<MouseButton button="2" enabled="true" />
+
+			<OnClicked>
+				self.manager:OnClicked(self, button)
+			</OnClicked>
+
+			<OnMouseDoubleClick>
+				self.manager:OnMouseDoubleClick(button)
+			</OnMouseDoubleClick>
+
+			<OnMouseEnter>
+				self.manager:OnMouseEnter(self)
+			</OnMouseEnter>
+
+			<OnMouseExit>
+				self.manager:OnMouseExit(self)
+			</OnMouseExit>
+
+			<Controls>
+				<Texture name="$(parent)Background" color="000000">
+					<AnchorFill />
+				</Texture>
+				<Texture name="$(parent)Item" hidden="true">
+					<AnchorFill />
+				</Texture>
+				<Label name="$(parent)Label" font="ZoFontGameMedium">
+					<Anchor point="BOTTOMRIGHT" relativeTo="BOTTOMRIGHT"
+						offsetX="-4" offsetY="-4" />
+				</Label>
+				<Texture name="$(parent)Border" textureFile="Backpack/itemborder.dds" layer="OVERLAY">
+					<AnchorFill />
+				</Texture>
+			</Controls>
+		</Button>
+	</Controls>
+</GuiXml>

@@ -27,7 +27,7 @@ Scene.keybindStripDescriptor =
 			for k, v in pairs(BACKPACK.settings.groups) do
 				AddMenuItem(v.name, function()
 					local group = BACKPACK:GetGroup(v.name)
-					backpack.ui.group.GROUP_DIALOG:ShowEditGroupDialog(group)
+					backpack.ui.group.GROUP_DIALOG:ShowEditGroupDialog(BACKPACK.settings.groups[v.name])
 				end
 				)
 			end
