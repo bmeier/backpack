@@ -14,8 +14,15 @@ FilterFactory.FILTER_TYPES = {
 	ItemCount = 9,
 	ItemResearchable = 10, 
 	WeaponType = 11,
-	ArmorType = 12
+	ArmorType = 12,
+	FilterList = 13
 }
+
+FilterFactory.BOOLEAN_OPS = {	
+	And = 0,
+	Or = 1
+}
+
 
 function FilterFactory:New()
 	local factory = ZO_Object.New(self)

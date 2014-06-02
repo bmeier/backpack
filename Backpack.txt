@@ -58,10 +58,16 @@ ui/filter/WeaponTypeFilterOptions.xml
 ui/filter/WeaponTypeFilterOptions.lua
 ui/filter/ArmorTypeFilterOptions.xml
 ui/filter/ArmorTypeFilterOptions.lua
+
+filter/FilterList.lua
+ui/filter/FilterListOptions.xml
+ui/filter/FilterListOptions.lua
+
 ui/filter/FilterOptionsDialog.xml
 ui/filter/FilterOptionsDialog.lua
 
 ui/slot/package.lua
+ui/slot/Slot.xml
 ui/slot/SlotControl.lua
 
 ui/group/package.lua
@@ -75,6 +81,11 @@ ui/group/GroupFragment.lua
 ui/scene/package.lua
 ui/scene/Fragment.lua
 ui/scene/Scene.lua
+
+
+
+
+
 
 Handler.lua
 bindings.xml
