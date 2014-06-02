@@ -18,7 +18,7 @@ function ItemTypeOptions:Initialize( )
 	local entries = {}
 	for i, type in pairs(backpack.Item.ItemType) do
 		local entry = combobox:CreateItemEntry(i, function() self.type = type end)
-		entries[i] = type
+		entries[type] = entry
 		combobox:AddItem(entry)
 	end
 	self.entries = entries
