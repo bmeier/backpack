@@ -309,7 +309,7 @@ function GroupWindow:ShowPopupMenu()
 	ClearMenu()
 	AddMenuItem(GetString(BP_ADD), function() backpack.ui.group.GROUP_DIALOG:ShowCreateGroupDialog() end)
 	AddMenuItem(GetString(BP_HIDE), function() self.group:SetHidden(true) end)
-	AddMenuItem(GetString(BP_EDIT), function() backpack.ui.group.GROUP_DIALOG:ShowEditGroupDialog(self.group) end)
+	AddMenuItem(GetString(BP_EDIT), function() backpack.ui.group.GROUP_DIALOG:ShowEditGroupDialog(BACKPACK.settings.groups[self.group.name]) end)
 	AddMenuItem(GetString(BP_DELETE), function() BACKPACK:DeleteGroup(self.group.name)  end)
 	ShowMenu(self.window)
 end
