@@ -4,7 +4,7 @@ local FilterList = ZO_Object:Subclass()
 function FilterList:New( )
 	local r = ZO_Object.New(self)
 	r.description = "Filters items based on their type"
-	r.name = "Filter List"
+	r.name = "Combine Filters"
 	r.type = ff.FILTER_TYPES.FilterList
 	return r
 end
@@ -20,6 +20,9 @@ function FilterList:Matches(slot, options)
 		matches = false
 	end
 	for _, filter in pairs(options.filter) do
+		if filter == self.name then
+			return false
+		end
 		local data = BACKPACK.settings.filter[filter]
 		if not data then return false end
 		local filterMatches = ff:GetFilter(data.type):Matches(slot, data.options)

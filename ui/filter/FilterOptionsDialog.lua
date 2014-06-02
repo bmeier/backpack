@@ -200,7 +200,7 @@ end
 
 function FilterOptionsDialog:SetFilterOptions ( options )
 	if self.options then
-		self.options:SetOptions(options)
+		self.options:SetOptions(options, self)
 	end
 end
 

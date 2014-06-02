@@ -19,8 +19,8 @@ FilterFactory.FILTER_TYPES = {
 }
 
 FilterFactory.BOOLEAN_OPS = {	
-	And = 0,
-	Or = 1
+	AND = 0,
+	OR = 1
 }
 
 

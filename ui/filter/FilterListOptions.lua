@@ -17,6 +17,29 @@ function List:Initialize(parent)
 		label:SetText(data.name)
 		control:SetHandler("OnMouseEnter", function() self:EnterRow(control) end)
 		control:SetHandler("OnMouseExit", function() self:ExitRow(control) end)
+		control:SetHandler("OnMouseUp",
+		function(clickedControl, button)
+			if (button == 2) then
+				ClearMenu()
+				AddMenuItem(GetString(BP_REMOVE), function()
+					local idx = -1
+					for i, filter in pairs(parent.filter) do
+						if( filter == data.name ) then
+							idx = i
+							break
+						end
+					end
+
+					if idx > 0 then
+						table.remove(parent.filter, idx)
+						self:RefreshData()
+					end
+
+
+				end)
+				ShowMenu(control)
+			end
+		end)
 	end
 
 	ZO_ScrollList_SetHeight(self.list,200)
@@ -58,35 +81,35 @@ function FilterListOptions:Initialize( )
 	local entries = {}
 	for i, op in pairs(backpack.filter.FILTER_FACTORY.BOOLEAN_OPS) do
 		local entry = self.operator:CreateItemEntry(i, function() self.op = op end)
-		entries[i] = entry
+		entries[op] = entry
 		self.operator:AddItem(entry)
 	end
 	self.entries = entries
-	self.operator:SelectItem(entries[backpack.filter.FILTER_FACTORY.BOOLEAN_OPS.And])
+	self.operator:SelectItem(entries[backpack.filter.FILTER_FACTORY.BOOLEAN_OPS.AND])
 end
 
 function FilterListOptions:ShowAddMenu()
 	ClearMenu()
 	for name, data in pairs(BACKPACK.settings.filter) do
+		if(name ~= self.filterName) then
+			AddMenuItem(name,
+			function()
+				local exists = false
+				for i, filter in pairs(self.filter) do
+					if filter == name  then
+						exists = true
+						break
+					end
+				end
 
-		AddMenuItem(name,
-		function()
-			local exists = false
-			for i, filter in pairs(self.filter) do
-				if filter == name then
-					exists = true
-					break
+				if not exists then
+					table.insert(self.filter, name)
+					self.list:RefreshData()
 				end
 			end
+			)
 
-			if not exists then
-				table.insert(self.filter, name)
-				self.list:RefreshData()
-			end
 		end
-		)
-
-
 	end
 
 	ShowMenu()
@@ -104,13 +127,15 @@ function FilterListOptions:ShowRemoveMenu()
 	end
 	ShowMenu()
 end
-function FilterListOptions:SetOptions( options )
+function FilterListOptions:SetOptions( options, dialog )
+	self.filterName = dialog:GetFilterName()
+
 	if(options) then
 		if options.filter then
 			self.filter = options.filter
 			self.list:RefreshData()
 		end
-		
+
 		if options.op then
 			self.op = options.op
 			local entry = self.entries[self.op]
