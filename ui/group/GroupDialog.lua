@@ -285,7 +285,7 @@ function GroupDialog:Initialize(...)
 end
 
 function GroupDialog:SetWeight( weight )
-	self.weightTextField:SetText(weight)
+	self.weightTextField:SetText(tostring(weight))
 end
 
 function GroupDialog:SetFilter( name )
