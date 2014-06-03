@@ -199,7 +199,7 @@ function FilterOptionsDialog:SetFilter( filter )
 end
 
 function FilterOptionsDialog:SetFilterOptions ( options )
-	if self.options then
+	if options then
 		self.options:SetOptions(options, self)
 	end
 end
