@@ -16,7 +16,7 @@ function FilterList:Matches(slot, options)
 	if not options.op then return false end
 
 	local matches = true
-	if options.op == ff.BOOLEAN_OPS.Or  then
+	if options.op == ff.BOOLEAN_OPS.OR  then
 		matches = false
 	end
 	for _, filter in pairs(options.filter) do
@@ -26,7 +26,7 @@ function FilterList:Matches(slot, options)
 		local data = BACKPACK.settings.filter[filter]
 		if not data then return false end
 		local filterMatches = ff:GetFilter(data.type):Matches(slot, data.options)
-		if options.op == ff.BOOLEAN_OPS.Or  then
+		if options.op == ff.BOOLEAN_OPS.OR  then
 			if  filterMatches == true then
 				return true
 			end
